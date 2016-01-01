@@ -1,7 +1,7 @@
 var geocodeURL = "https://maps.googleapis.com/maps/api/geocode/json"; //to access geocode API
 // Google Geocode API key - different from Map key
 var apiKeyGeocode = "AIzaSyBkBk3maFmugZtnSWKTkFMK2CXIe0c_20k";
-
+var street ="";
 var city = "los+angeles";
 var state = 'CA';
 var country = 'USA'
@@ -36,11 +36,22 @@ var makeMap = function() {
     });
 };
 //creates marker on map based on geocode lookup of address
-var makeMarker = function() {
-    var addressNumber = "2432";
-    var street1 = "Claremont";
-    var street2 = "Ave";
-    var addressStringAddress = addressNumber + "+" + street1 + "+" + street2 + ",+" + city + ",+" + state;
+var makeMarker = function(event) {
+    console.log("makeMarker");
+
+    street = $('#street').val();
+    var street2 = street;
+    console.log("This is street & street2");
+    console.log(street);
+    console.log(street2);
+    console.log(typeof street);
+    var addressArray = street.split(" ");
+    var streetAddressQueriable = addressArray[0];
+    for (var i = 1; i < addressArray.length; i++) {
+        streetAddressQueriable += "+" + addressArray[i];
+    }
+    console.log(streetAddressQueriable);
+    var addressStringAddress = streetAddressQueriable + ",+" + city + ",+" + state;
     var geocodeDataAddress = {
         address: addressStringAddress,
         key: apiKeyGeocode
@@ -50,20 +61,24 @@ var makeMarker = function() {
         updateLatLng(data);
         setMarker(); //put the marker on the map using geocode lat lng
     });
+    //alert("makeMarker complete");
 };
 
 //places the marker on map after successful geocode lookup of address
 var setMarker = function() {
     console.log("here's new marker latlng"); // perf check
     console.log(myLatLng); // perf check
+    console.log("This is street in setMarker");
+    console.log(street);
+    console.log(typeof street);
     var marker = new google.maps.Marker({
         position: myLatLng,
         map: map,
-        title: "test" // shows on cursor hover
+        title: street // shows on cursor hover
     });
     // Google Map "infoWindow" creation
     infoWindow = new google.maps.InfoWindow({
-        content: " pop up!" // will show when used in combo w click event listener
+        content: street+" pop up!" // will show when used in combo w click event listener
     });
 
     //Google Map click event on marker reveals infoWindo
@@ -88,7 +103,13 @@ var updateLatLng = function(data) {
 
 initMap(); // creates the map
 
-makeMarker(); // sets the marker
+$('#submit-btn').on('click',function(event) {
+    //alert("Handler for button click called.");
+    makeMarker();
+    event.preventDefault();
+});
+
+//makeMarker(); // sets the marker
 
 //https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=YOUR_API_KEY
 /*
