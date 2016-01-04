@@ -1,10 +1,22 @@
+var modelMarkerInfo = [{
+    street: "123 Main St"
+}, {
+    street: "1738 Hyperion Ave"
+}, {
+    street: "2600 beverly blvd"
+}];
+
+
 var geocodeURL = "https://maps.googleapis.com/maps/api/geocode/json"; //to access geocode API
 // Google Geocode API key - different from Map key
 var apiKeyGeocode = "AIzaSyBkBk3maFmugZtnSWKTkFMK2CXIe0c_20k";
-var street ="";
-var city = "los+angeles";
-var state = 'CA';
-var country = 'USA'
+//var street = "";
+
+var modelLocale = {
+city: "Longeles",
+state: 'CA',
+country: 'USA'
+};
 
 var lat; // latitude value
 var lng; // longitude value
@@ -14,7 +26,7 @@ var infoWindow; // marker
 
 var initMap = function() {
     //Address String for CITY query
-    var addressStringCity = city + ",+" + state;
+    var addressStringCity = modelLocale.city + ",+" + modelLocale.state;
     // Data for City Geocode submission
     var geocodeDataCity = {
         address: addressStringCity,
@@ -25,6 +37,7 @@ var initMap = function() {
         console.log("worked"); // perf check
         updateLatLng(data);
         makeMap(); // Make map based on CITY lat & lng
+        makeAllMarkers(modelMarkerInfo);
     });
 };
 
@@ -35,29 +48,30 @@ var makeMap = function() {
         zoom: 13
     });
 };
+
+ var makeAllMarkers = function (markerArray) {
+    console.log ("makeAllMarkers");
+    for (var i = 0; i <markerArray.length; i++) {
+        makeMarker (markerArray[i]);
+    }
+ }
 //creates marker on map based on geocode lookup of address
-var makeMarker = function(event) {
+var makeMarker = function(markeObject) {
     console.log("makeMarker");
 
-    street = $('#street').val();
-    var street2 = street;
-    console.log("This is street & street2");
-    console.log(street);
-    console.log(street2);
-    console.log(typeof street);
-    var addressArray = street.split(" ");
-    var streetAddressQueriable = addressArray[0];
+    street = markeObject.street
+    var addressArray = street.split(" ");//geting rid of white spaces
+    var streetAddressQueriable = addressArray[0]; //begin piece of API URL
     for (var i = 1; i < addressArray.length; i++) {
-        streetAddressQueriable += "+" + addressArray[i];
+        streetAddressQueriable += "+" + addressArray[i]; //reconsituting for API URL
     }
-    console.log(streetAddressQueriable);
-    var addressStringAddress = streetAddressQueriable + ",+" + city + ",+" + state;
+    var addressStringAddress = streetAddressQueriable + ",+" + modelLocale.city + ",+" + modelLocale.state;
     var geocodeDataAddress = {
         address: addressStringAddress,
         key: apiKeyGeocode
     };
     $.getJSON(geocodeURL, geocodeDataAddress, function(data) {
-        console.log("worked"); //perf check
+        console.log("makeMarker getJSON worked"); //perf check
         updateLatLng(data);
         setMarker(); //put the marker on the map using geocode lat lng
     });
@@ -66,11 +80,10 @@ var makeMarker = function(event) {
 
 //places the marker on map after successful geocode lookup of address
 var setMarker = function() {
-    console.log("here's new marker latlng"); // perf check
+    console.log("here's setMarker latlng"); // perf check
     console.log(myLatLng); // perf check
     console.log("This is street in setMarker");
     console.log(street);
-    console.log(typeof street);
     var marker = new google.maps.Marker({
         position: myLatLng,
         map: map,
@@ -78,7 +91,7 @@ var setMarker = function() {
     });
     // Google Map "infoWindow" creation
     infoWindow = new google.maps.InfoWindow({
-        content: street+" pop up!" // will show when used in combo w click event listener
+        content: street + " pop up!" // will show when used in combo w click event listener
     });
 
     //Google Map click event on marker reveals infoWindo
@@ -103,12 +116,13 @@ var updateLatLng = function(data) {
 
 initMap(); // creates the map
 
+/*
 $('#submit-btn').on('click',function(event) {
     //alert("Handler for button click called.");
     makeMarker();
     event.preventDefault();
 });
-
+*/
 //makeMarker(); // sets the marker
 
 //https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=YOUR_API_KEY
