@@ -13,9 +13,9 @@ var apiKeyGeocode = "AIzaSyBkBk3maFmugZtnSWKTkFMK2CXIe0c_20k";
 //var street = "";
 
 var modelLocale = {
-city: "Longeles",
-state: 'CA',
-country: 'USA'
+    city: "Los Angeles",
+    state: 'CA',
+    country: 'USA'
 };
 
 var lat; // latitude value
@@ -49,18 +49,19 @@ var makeMap = function() {
     });
 };
 
- var makeAllMarkers = function (markerArray) {
-    console.log ("makeAllMarkers");
-    for (var i = 0; i <markerArray.length; i++) {
-        makeMarker (markerArray[i]);
+var makeAllMarkers = function(markerArray) {
+        console.log("makeAllMarkers");
+        for (var i = 0; i < markerArray.length; i++) {
+            makeMarker(markerArray[i], i);
+
+        }
     }
- }
-//creates marker on map based on geocode lookup of address
-var makeMarker = function(markeObject) {
+    //creates marker on map based on geocode lookup of address
+var makeMarker = function(markerObject, index) {
     console.log("makeMarker");
 
-    street = markeObject.street
-    var addressArray = street.split(" ");//geting rid of white spaces
+    street = markerObject.street
+    var addressArray = street.split(" "); //geting rid of white spaces
     var streetAddressQueriable = addressArray[0]; //begin piece of API URL
     for (var i = 1; i < addressArray.length; i++) {
         streetAddressQueriable += "+" + addressArray[i]; //reconsituting for API URL
@@ -73,10 +74,33 @@ var makeMarker = function(markeObject) {
     $.getJSON(geocodeURL, geocodeDataAddress, function(data) {
         console.log("makeMarker getJSON worked"); //perf check
         updateLatLng(data);
-        setMarker(); //put the marker on the map using geocode lat lng
+        var currentMarker = setMarker(); //put the marker on the map using geocode lat lng
+        console.log("return on currentMarker:");
+        console.log(currentMarker);
+        sidebar(markerObject, index, currentMarker) // creates sidebar list item, and places click event listener
+
     });
     //alert("makeMarker complete");
 };
+
+var sidebar = function(markerObject, index, markerItem) {
+    //New List Item
+    var elem = document.createElement("li");
+    var newID = "index"+index; // creates unique ID based on list item index
+    elem.setAttribute("id", newID);
+    var content = document.createTextNode(markerObject.street);
+    elem.appendChild(content);
+    var sidebar = document.getElementById("sidebar");
+    sidebar.appendChild(elem);
+    // Add click listener for new list item
+    var listElem = document.getElementById(newID); //hook for event listener
+
+    listElem.addEventListener('click', function() {
+        //"open" info window on click
+        console.log("click on list worked "+ newID); // perf check
+        infoWindow.open(map, markerItem); // pop up info for corresponding marker
+    });
+}
 
 //places the marker on map after successful geocode lookup of address
 var setMarker = function() {
@@ -99,6 +123,7 @@ var setMarker = function() {
         //"open" info window on click
         infoWindow.open(map, marker);
     });
+    return marker;
 };
 
 //Gen use function for parsing lat & long data from geocode look up
