@@ -14,11 +14,13 @@
 </head>
 
 <body>
+     <!-- LOCATION LIST  -->
     <div id="overlay-list">
         <ul data-bind="foreach: starList">
-        <li data-bind="text: street, click: $parent.log, click: marker.popupevent"></li>
+        <li data-bind="text: street, click: marker.popupevent"></li>
         </ul>
     </div>
+     <!-- MAP -->
     <div id="map"></div>
     <script src="js/script.js" type="text/javascript">
     </script>
