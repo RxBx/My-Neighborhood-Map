@@ -1,0 +1,153 @@
+[{
+	"name": "Case Study House #1",
+	"address1": "10152 TOLUCA LAKE AVE",
+	"city": "Los Angeles",
+	"public": false,
+	"architect": "JR Davidson",
+	"Case Study": true,
+	"Year Built": 1948
+}, {
+	"name": "Case Study House #2",
+	"address1": "857 CHAPEA RD",
+	"city": "PASADENA",
+	"public": false,
+	"architect": "Sumner Spaulding and John Rex",
+	"Case Study": true,
+	"Year Built": 1947
+}, {
+	"name": "Case Study House #3",
+	"address1": "13187 CHALON RD",
+	"city": "Los Angeles",
+	"public": false,
+	"architect": "William Wurster, Theodore Bernardi, and Donald Emmons",
+	"Case Study": true,
+	"Year Built": 1949
+}, {
+	"name": "Case Study House #7",
+	"address1": "6236 N DEERFIELD AVE",
+	"city": "SAN GABRIEL",
+	"public": false,
+	"architect": "Thornton M. Abell",
+	"Case Study": true,
+	"Year Built": 1948
+}, {
+	"name": "Eames House (Case Study House #8)",
+	"address1": "203 CHAUTAUQUA BLVD",
+	"city": "Los Angeles",
+	"public": true,
+	"architect": "Charles Eames",
+	"Case Study": true,
+	"Year Built": 1948
+}, {
+	"name": "Entenza House (Case Study House #9)",
+	"address1": "205 CHAUTAUQUA BLVD",
+	"city": "Los Angeles",
+	"public": false,
+	"architect": "Charles Eames and Eero Saarinen",
+	"Case Study": true,
+	"Year Built": 1949
+}, {
+	"name": "Case Study House #10",
+	"address1": "711 S SAN RAFAEL AVE",
+	"city": "PASADENA",
+	"public": false,
+	"architect": "Kemper Nomland",
+	"Case Study": true,
+	"Year Built": 1947
+}, {
+	"name": "Case Study House #15",
+	"address1": "4755 LASHEART DR",
+	"city": "La Cañada Flintridge",
+	"public": false,
+	"architect": "JR Davidson",
+	"Case Study": true,
+	"Year Built": 1947
+}, {
+	"name": "Case Study House for 1953",
+	"address1": "1811 BEL AIR RD",
+	"city": "Los Angeles",
+	"public": false,
+	"architect": "Craig Ellwood",
+	"Case Study": true,
+	"Year Built": 1953
+}, {
+	"name": "Case Study House #17-1",
+	"address1": "7861 WOODROW WILSON DR",
+	"city": "Los Angeles",
+	"public": false,
+	"architect": "Rodney Walker",
+	"Case Study": true,
+	"Year Built": 1947
+}, {
+	"name": "Case Study House #17-2",
+	"address1": "9554 HIDDEN VALLEY RD",
+	"city": "BEVERLY HILLS",
+	"public": false,
+	"architect": "Craig Ellwood",
+	"Case Study": true,
+	"Year Built": 1956
+}, {
+	"name": "West House / Case Study House #18-1",
+	"address1": "199 CHAUTAUQUA BLVD",
+	"city": "Los Angeles",
+	"public": false,
+	"architect": "Rodney Walker",
+	"Case Study": true,
+	"Year Built": 1948
+}, {
+	"name": "Fields House / Case Study House #18-2",
+	"address1": "1129 MIRADERO RD",
+	"city": "BEVERLY HILLS",
+	"public": false,
+	"architect": "Craig Ellwood",
+	"Case Study": true,
+	"Year Built": 1958
+}, {
+	"name": "Bass House / Case Study House #20-2",
+	"address1": "2275 SANTA ROSA AVE",
+	"city": "ALTADENA",
+	"public": false,
+	"architect": "Buff, Straub, and Hensman with Saul Bass",
+	"Case Study": true,
+	"Year Built": 1958
+}, {
+	"name": "Case Study House #21",
+	"address1": "9038 WONDERLAND PARK AVE",
+	"city": "Los Angeles",
+	"public": false,
+	"architect": "Pierre Koenig",
+	"Case Study": true,
+	"Year Built": 1958
+}, {
+	"name": "Stahl House / Case Study House #22",
+	"address1": "1635 WOODS DR",
+	"city": "Los Angeles",
+	"public": true,
+	"architect": "Pierre Koenig",
+	"Case Study": true,
+	"Year Built": 1960
+}, {
+	"name": "Case Study House for 1950",
+	"address1": "1080 RAVOLI DR",
+	"city": "Los Angeles",
+	"public": false,
+	"architect": "Raphael Soriano",
+	"Case Study": true,
+	"Year Built": 1950
+}, {
+	"name": "Frank House / Case Study House #25",
+	"address1": "82 RIVO ALTO CANAL",
+	"city": "LONG BEACH",
+	"public": false,
+	"architect": "Killingsworth, Brady, and Smith and Assoc.",
+	"Case Study": true,
+	"Year Built": 1962
+}, {
+	"name": "Janss Dev / Case Study House #28",
+	"address1": "91 INVERNESS RD",
+	"city": "THOUSAND OAKS",
+	"public": false,
+	"architect": "Buff & Hensman",
+	"Case Study": true,
+	"Year Built": 1966
+}]

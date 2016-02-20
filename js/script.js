@@ -1,3 +1,5 @@
+"use strict";
+
 //MODEL DATA
 var modelStarInfo = [{
     firstName: "Bob",
@@ -44,44 +46,281 @@ var apiKeyGeocode = "AIzaSyBkBk3maFmugZtnSWKTkFMK2CXIe0c_20k";
 var ViewModel = function() {
     var self = this; //used to lock context for incrementCounter method defined below
 
-    self.map = makeMap();
+    this.Place = function(placeObject) {
 
-    this.starList = ko.observableArray([]);
+        this.name = placeObject.name;
+        this.address1 = placeObject.address1;
+        this.city = placeObject.city;
+        this.access = placeObject.access;
+        this.architect = placeObject.architect;
+        this.caseStudy = placeObject["Case Study"];
+        this.year = placeObject.year;
+        //creates a marker attached to the each StarItem object
+        this.marker = new google.maps.Marker({
+            position: null,
+            map: null,
+            title: placeObject.name
+        }); //TODO Add marker creation without LatLng - a version of makeMarker without LatLng
+        this.exhibit = ko.observable(true);
+        this.searchString = (function() {
+            var searchString = placeObject.name + placeObject.address1 + placeObject.city + placeObject.architect + placeObject.year;
+            if (placeObject.caseStudy === true) {
+                searchString = searchString + "caseStudy";
+            }
+            searchString = searchString.toLowerCase();
+            //console.log(searchString);
+            return searchString;
+        })();
+    };
 
-    //PUSHES ALL MODEL DATA OBJECTS INTO KO OBS ARRAY AS NEW "STARITEM"S
-    modelStarInfo.forEach(function(markerItem) {
-        self.starList.push(new StarItem(markerItem));
-        console.log("items as starList generates:");
-        //FOR LOGGING PURPOSES ONLY
-        var arrayLength = self.starList().length;
-        streetSearchItem = self.starList()[arrayLength - 1];
-
-        console.log(streetSearchItem.street()); //perf check
-        console.log(streetSearchItem.lat()); //perf check
-        console.log(streetSearchItem.lng()); //perf check
-    });
-};
-
-var makeMap = function() {
     this.map = new google.maps.Map(document.getElementById('map'), {
         center: {
             lat: 34.0500,
             lng: -118.2500
         },
-        zoom: 13
+        zoom: 9
     });
+
+    this.placeList = ko.observableArray([]);
+    this.decades = ko.observableArray([]);
+    this.architect = ko.observableArray([]);
+    this.access = ko.observableArray([]);
+    //initial value; cleared at end of load to prompt marker placement
+    this.search = ko.observable("placekeepr");
+
+    this.evaluateExhibit = function() {
+        //Goes through each place in placeList to see if it matches filters/search if present;
+        //if so, it sets the "exhibit" to "true"
+        self.placeList().forEach(function(placeObject) {
+            //reset "exhibit" in each places to "false" at head of evaluation loop;
+            //This will be evaluated filter-by-filter;
+            placeObject.exhibit(false);
+
+            //check for access filter
+            //when access filter isn't empty, compare all filter letters against access array;
+            //and IF a place "exhibit" hasn't already been set to "true", and IF it doesn't match the
+            //new access filter letter, make sure it's false;
+            //otherwise/else (if "match" or already "true", set "true")
+            if (self.access().length > 0) {
+                for (var i = 0, len = self.access().length; i < len; i++) {
+                    if ((placeObject.access !== self.access()[i]) && (placeObject.exhibit() === false)) {
+                        placeObject.exhibit(false);
+                    } else {
+                        placeObject.exhibit(true);
+                    }
+                }
+            } else //if no access filter letter is present (empty array) then set all exhibit to "true"
+            //and proceed to next filter set.
+            {
+                placeObject.exhibit(true);
+            }
+            //check for architect filter & Case Study on placeObjects already "true" from prior filters
+            //Examines 2 attributes: "Case Study" or specific "architect"
+            //"Case Study" is a boolean indicating whether home was built as part of special architectural initiative
+            //"Architect" may be one of several high-profile architects
+            if ((self.architect().length > 0) && placeObject.exhibit() === true) {
+                placeObject.exhibit(false);
+                //evaluate if Case Study is checked & matches.
+                if (placeObject.caseStudy === true && self.architect().indexOf("Case Study") > -1) {
+                    placeObject.exhibit(true);
+                }
+                //for placeObjects not matched to "Case Study", checks for match of checked architect &
+                // placeObject's "architect"
+                var archMatch = false;
+                if (placeObject.exhibit() === false) {
+                    self.architect().forEach(function(element) {
+                        //console.log("builder loop");
+                        if ((placeObject.architect.indexOf(element) > -1) && (archMatch !== true)) {
+                            archMatch = true;
+                            //console.log("archMatch true for: " + element);
+                        }
+                        if (archMatch === true) {
+                            placeObject.exhibit(true);
+                        }
+                    });
+                }
+            }
+
+            //check for decades filter
+
+            if ((self.decades().length > 0) && (placeObject.exhibit() === true)) {
+                var decadeMatch = false;
+                placeObject.exhibit(false);
+                //console.log("place year: " + placeObject.year);
+                var placeDecade = Math.floor(placeObject.year / 10) * 10;
+                //console.log("placeDecade: " + placeDecade);
+                for (var i = 0, len = self.decades().length; i < len; i++) {
+                    //console.log("Decade checkbox: " + self.decades()[i]);
+                    var matcher = self.decades()[i];
+                    if ((matcher == placeDecade) || (decadeMatch === true)) {
+                        decadeMatch = true;
+                        //console.log("match");
+                    }
+                }
+                if (decadeMatch === true) {
+                    placeObject.exhibit(true);
+                }
+            }
+
+            if ((self.search() != false) && (placeObject.exhibit() === true)) {
+                if (placeObject.searchString.indexOf(self.search().toLowerCase()) > -1) {
+                    placeObject.exhibit(true);
+                } else {
+                    placeObject.exhibit(false);
+                }
+            } else if ((self.search() === "") && (placeObject.exhibit() === true)) {
+                placeObject.exhibit(true);
+            }
+
+        });
+
+        self.makeMarkers();
+    };
+
+    self.decades.subscribe(self.evaluateExhibit);
+    self.architect.subscribe(self.evaluateExhibit);
+    self.access.subscribe(self.evaluateExhibit);
+    self.search.subscribe(self.evaluateExhibit);
+
+    /*
+        $.ajax({
+            url: "https://api.myjson.com/bins/1m0xt",
+            type: "GET",
+            //data: "4y15l",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        }).done(function(data, textStatus, jqXHR) {
+            self.sortPlaces(data);
+        });
+    */
+
+
+    //PUSHES ALL MODEL DATA OBJECTS INTO KO OBS ARRAY AS NEW "STARITEM"S
+    this.sortPlaces = function(data) {
+        data.forEach(function(placeObject) {
+            self.placeList().push(new self.Place(placeObject));
+        });
+        //geocodePlaces(self.placeList());
+        //TODO Add geocodePlaces to make a geocode technique that uses IF to check status,
+        //then place LatLng, THEN restart on next geocode until reaching final item.
+        // Use versions of makeMarker, updateLatLng,
+    };
+
+    this.updateLatLng = function(data) {
+        lat = Number(data.results[0].geometry.location.lat);
+        lng = Number(data.results[0].geometry.location.lng);
+
+        var LatLng = {
+            lat: lat,
+            lng: lng
+        };
+    };
+
+    this.makeMarkers = function() {
+        //self.placeList().forEach(function(placeObject, index) {
+        //  self.makeMarker(placeObject, index);
+        //};
+        console.log("running makeMarkers");
+        //sets looping values external/prior to "markerSpinner" for special purpose looping in "markerSpinner"
+        var len = self.placeList().length;
+        var counter = 0;
+        //
+        self.markerSpinner(counter, len);
+    };
+    //This function on first run, geocodes all markers;
+    //on all runs, sets "exhibit===true" markers on map, removes "exhibit===false" markers
+    //Geocode's special "staggered loop" structure prevents errors from Geocode API during mass geocoding
+    //by sending a fresh Geocode request only after the previous Geocode request has been received "OK"
+    this.markerSpinner = function(counter, len) {
+        console.log("counter " + counter);
+
+        if (counter < len) {
+
+            if (self.placeList()[counter].marker.getPosition() === null) {
+                var address1 = self.placeList()[counter].address1;
+                console.log("geocoding counter " + counter);
+                var city = self.placeList()[counter].city;
+                var addressArray = address1.split(" "); //geting rid of white spaces
+                var streetAddressQueriable = addressArray[0]; //begin piece of API URL
+                for (var i = 1; i < addressArray.length; i++) {
+                    streetAddressQueriable += "+" + addressArray[i]; //reconsituting for API URL
+                }
+                var addressStringAddress = streetAddressQueriable + ",+" + city + ",+CA";
+                var geocodeDataAddress = {
+                    address: addressStringAddress,
+                    key: apiKeyGeocode
+                };
+                $.getJSON(geocodeURL, geocodeDataAddress, function(data) {
+                    if (data.status === "OK") {
+                        var LatLng = data.results[0].geometry.location;
+                        //var currentMarker = setMarker(); //put the marker on the map using geocode lat lng
+                        self.placeList()[counter].marker.setPosition(LatLng);
+                        if (self.placeList()[counter].exhibit() === true) {
+                            self.placeList()[counter].marker.setMap(self.map);
+                        }
+                        //advance counter so next placeList item gets fed to markerSpinner
+                        counter++;
+                        //submits next request
+                        self.markerSpinner(counter, len);
+                    } else if (data.status === "OVER_QUERY_LIMIT") {
+                        //if Geocoder hits limit, re-submit SAME counter number, to re-run the Geocode request
+                        self.markerSpinner(counter, len);
+                    } else {
+                        //Other Geocode errors prompts message
+                        console.log("geocode error status: " + data.status);
+                        //advance counter so next placeList item gets fed to markerSpinner
+                        counter++;
+                        //submits next request
+                        self.markerSpinner(counter, len);
+                    }
+
+                });
+            } else {
+                if (self.placeList()[counter].exhibit() === true) {
+                    self.placeList()[counter].marker.setMap(self.map);
+                } else {
+                    self.placeList()[counter].marker.setMap(null);
+                }
+
+                counter++;
+                self.markerSpinner(counter, len);
+
+            }
+        }
+
+    };
+
+
+    this.makeMarker = function(markerObject, index) {
+
+        var address1 = markerObject.address1;
+        var city = markerObject.city;
+        var addressArray = address1.split(" "); //geting rid of white spaces
+        var streetAddressQueriable = addressArray[0]; //begin piece of API URL
+        for (var i = 1; i < addressArray.length; i++) {
+            streetAddressQueriable += "+" + addressArray[i]; //reconsituting for API URL
+        }
+        var addressStringAddress = streetAddressQueriable + ",+" + city + ",+CA";
+        var geocodeDataAddress = {
+            address: addressStringAddress,
+            key: apiKeyGeocode
+        };
+        $.getJSON(geocodeURL, geocodeDataAddress, function(data) {
+
+            self.updateLatLng(data);
+            var currentMarker = setMarker(); //put the marker on the map using geocode lat lng
+
+
+        });
+    };
+
+    self.sortPlaces(masterList);
+    //change ko "search" to blank string prompts placing all markers.
+    self.search("");
 };
 
-var StarItem = function(starInstance) {
-    this.firstName = ko.observable(starInstance.firstName);
-    this.lastName = ko.observable(starInstance.lastName);
-    this.street = ko.observable(starInstance.street);
-    this.favorite = ko.observable(false);
-    this.lat = ko.observable(starInstance.lat);
-    this.lng = ko.observable(starInstance.lng);
-    //creates a marker attached to the each StarItem object
-    this.marker = new Marker(self.map, starInstance.lastName, starInstance.lat, starInstance.lng, starInstance.street);
-};
+
+
 
 var Marker = function(map, lastName, lat, lon, street) {
 
@@ -101,26 +340,26 @@ var Marker = function(map, lastName, lat, lon, street) {
     var infoWindow = new google.maps.InfoWindow({
         content: this.street() + " pop up!" // will show when used in combo w click event listener
     });
-    console.log(infoWindow.content); // perf check
+    //console.log(infoWindow.content); // perf check
     //this.infoWindow = infoWindow;
 
     this.popupevent = function() {
-        console.log("The context inside the popupevent method appears to be selected StarItem array item:")
-        console.log(this);
+        //console.log("The context inside the popupevent method appears to be selected StarItem array item:")
+        //console.log(this);
         infoWindow.open(map, this.marker.marker); //thus, marker selection requires this.marker.marker
     };
     //Google Map click event on marker reveals infoWindo
     this.marker.addListener('click', function() {
-        console.log("This context inside the marker click event appears to be the marker itself:")
-        console.log(this);
+        //console.log("This context inside the marker click event appears to be the marker itself:")
+        //console.log(this);
         infoWindow.open(map, this); // thus marker selection simply requires "this"
     });
 
     this.changePopupContent = function() {
-        infoWindow.content = "Changed";
+        //infoWindow.content = "Changed";
     };
 
-    console.log("marker made"); //perf check
+    //console.log("marker made"); //perf check
     //this.isVisible = ko.observable(false);
 
     //this.isVisible.subscribe(function(currentState) {
@@ -132,6 +371,8 @@ var Marker = function(map, lastName, lat, lon, street) {
     //});
 
     //this.isVisible(true);
+
+
 };
 
 ko.applyBindings(new ViewModel());
@@ -185,6 +426,3 @@ ko.applyBindings(new ViewModel());
     };
 };
 */
-
-
-

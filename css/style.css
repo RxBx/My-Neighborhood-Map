@@ -7,15 +7,44 @@
       padding: 0;
   }
 
+  p {
+    margin: 0;
+  }
+
+#clearButton {
+  height:100%;
+  width: 5vw;
+  background-color: orange;
+  display: inline-block;
+}
+  #selections {
+      /*position: absolute;*/
+      /*height: 100%;*/
+      /*width: 20%;*/
+      /*left: 80%;*/
+      z-index: 1;
+      background-color: rgba(255, 255, 0, 0.5);
+  }
+
+  #selections p {
+    margin: 0 auto;
+  }
+
+
+
+  #overlay-list {
+      /*position: absolute;*/
+      width: 20%;
+      /*left: 80%;*/
+      /*z-index: 1;*/
+      background-color: rgba(255, 0, 0, 0.5);
+      float: right;
+  }
+
+  #mapHolder,
   #map {
       height: 100%;
-      z-index: 0;
-  }
-  #overlay-list {
-  	position: absolute;
-  	width: 20%;
-  	left: 80%;
-  	z-index: 1;
-  	background-color: rgba(255, 0, 0, 0.5);
-  	float: right;
+      /*width: 80%;*/
+      /*float: left;*/
+      /*z-index: 0;*/
   }
