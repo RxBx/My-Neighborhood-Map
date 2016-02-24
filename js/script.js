@@ -47,7 +47,7 @@ var ViewModel = function() {
     var self = this; //used to lock context for incrementCounter method defined below
 
     this.Place = function(placeObject) {
-
+        //var self = this;
         this.name = placeObject.name;
         this.address1 = placeObject.address1;
         this.city = placeObject.city;
@@ -60,7 +60,9 @@ var ViewModel = function() {
             position: null,
             map: null,
             title: placeObject.name
-        }); //TODO Add marker creation without LatLng - a version of makeMarker without LatLng
+        });
+
+        //TODO Add marker creation without LatLng - a version of makeMarker without LatLng
         this.exhibit = ko.observable(true);
         this.searchString = (function() {
             var searchString = placeObject.name + placeObject.address1 + placeObject.city + placeObject.architect + placeObject.year;
@@ -81,12 +83,23 @@ var ViewModel = function() {
         zoom: 9
     });
 
+    this.infowindow = new google.maps.InfoWindow({
+        content: ""
+            // will show when used in combo w click event listener
+    });
+
     this.placeList = ko.observableArray([]);
+    //.extend({ rateLimit: { timeout: 100, method: "notifyWhenChangesStop" } });
     this.decades = ko.observableArray([]);
+    //.extend({ rateLimit: { timeout: 100, method: "notifyWhenChangesStop" } });
     this.architect = ko.observableArray([]);
+    //.extend({ rateLimit: { timeout: 100, method: "notifyWhenChangesStop" } });
+    //initially select only non-private addresses
     this.access = ko.observableArray([]);
+    //.extend({ rateLimit: { timeout: 100, method: "notifyWhenChangesStop" } });
     //initial value; cleared at end of load to prompt marker placement
-    this.search = ko.observable("placekeepr");
+    this.search = ko.observable("");
+    //.extend({ rateLimit: { timeout: 100, method: "notifyWhenChangesStop" } });
 
     this.evaluateExhibit = function() {
         //Goes through each place in placeList to see if it matches filters/search if present;
@@ -177,11 +190,6 @@ var ViewModel = function() {
         self.makeMarkers();
     };
 
-    self.decades.subscribe(self.evaluateExhibit);
-    self.architect.subscribe(self.evaluateExhibit);
-    self.access.subscribe(self.evaluateExhibit);
-    self.search.subscribe(self.evaluateExhibit);
-
     /*
         $.ajax({
             url: "https://api.myjson.com/bins/1m0xt",
@@ -236,7 +244,7 @@ var ViewModel = function() {
 
         if (counter < len) {
 
-            if (self.placeList()[counter].marker.getPosition() === null) {
+            if ((self.placeList()[counter].exhibit() === true) && (self.placeList()[counter].marker.getPosition() === null)) {
                 var address1 = self.placeList()[counter].address1;
                 console.log("geocoding counter " + counter);
                 var city = self.placeList()[counter].city;
@@ -245,19 +253,56 @@ var ViewModel = function() {
                 for (var i = 1; i < addressArray.length; i++) {
                     streetAddressQueriable += "+" + addressArray[i]; //reconsituting for API URL
                 }
+                /*var addressStringAddressCensus = address1+','+city+',CA';
+
+                $.getJSON("http://geocoding.geo.census.gov/geocoder/locations/onelineaddress",
+                    {"address":addressStringAddressCensus,
+                    "benchmark":9,
+                    "format":"jsonp"
+                }, function(data)
+                {
+                    var LatLng = {lat: data["result"]["addressMatches"]["coordinates"]["x"],lng: data["result"]["addressMatches"]["coordinates"]["y"]};
+                    self.placeList()[counter].marker.setPosition(LatLng);
+                        var item = self.placeList()[counter];
+                        item.marker.setMap(self.map);
+
+                        item.marker.addListener('click', function() {
+
+                            self.infoWindowOpener(item);
+                        });
+                });
+                 if (self.placeList()[counter].exhibit() === true) {
+
+                        //advance counter so next placeList item gets fed to markerSpinner
+                        counter++;
+                        //submits next request
+                        self.markerSpinner(counter, len);
+
+                    }*/
+
                 var addressStringAddress = streetAddressQueriable + ",+" + city + ",+CA";
                 var geocodeDataAddress = {
                     address: addressStringAddress,
                     key: apiKeyGeocode
                 };
+
+
                 $.getJSON(geocodeURL, geocodeDataAddress, function(data) {
                     if (data.status === "OK") {
                         var LatLng = data.results[0].geometry.location;
                         //var currentMarker = setMarker(); //put the marker on the map using geocode lat lng
+
                         self.placeList()[counter].marker.setPosition(LatLng);
-                        if (self.placeList()[counter].exhibit() === true) {
-                            self.placeList()[counter].marker.setMap(self.map);
-                        }
+                        var item = self.placeList()[counter];
+                        item.marker.setMap(self.map);
+
+                        item.marker.addListener('click', function() {
+
+                            self.infoWindowOpener(item);
+                        });
+                    }
+                    if (self.placeList()[counter].exhibit() === true) {
+
                         //advance counter so next placeList item gets fed to markerSpinner
                         counter++;
                         //submits next request
@@ -275,23 +320,49 @@ var ViewModel = function() {
                     }
 
                 });
-            } else {
-                if (self.placeList()[counter].exhibit() === true) {
-                    self.placeList()[counter].marker.setMap(self.map);
-                } else {
-                    self.placeList()[counter].marker.setMap(null);
-                }
 
+            } else if (self.placeList()[counter].exhibit() === true) {
+                self.placeList()[counter].marker.setMap(self.map);
                 counter++;
                 self.markerSpinner(counter, len);
-
+            } else {
+                self.placeList()[counter].marker.setMap(null);
+                counter++;
+                self.markerSpinner(counter, len);
             }
+
+
+
+
         }
 
     };
 
+    this.infoWindowOpener = function(item) {
+        self.infowindow.close();
+        console.log("infoWindowOpener run");
+        var accessLetter = item.access;
+        var accessString = function(accessLetter) {
+            if (accessLetter === "e") {
+                return "Exterior View";
+            } else if (accessLetter === "o") {
+                return "Public Access";
+            } else if (accessLetter === "t") {
+                return "Access via Tours/Appointments";
+            } else if (accessLetter === "p") {
+                return "Private Residence - No Access";
+            }
+        };
+        var windowContent = '<p>' + item.name + '</p>' + '<p>' + item.address1 + ', ' + item.city + '</p>' + '<p>Year Built: ' + item.year + '</p>' + '<p>Architect(s): ' + item.architect + '</p>' +
+            '<p>' + accessString(accessLetter) + '</p>';
+        self.infowindow.setContent(windowContent);
 
-    this.makeMarker = function(markerObject, index) {
+        self.infowindow.open(self.map, item.marker);
+
+    };
+
+
+    /*this.makeMarker = function(markerObject, index) {
 
         var address1 = markerObject.address1;
         var city = markerObject.city;
@@ -312,17 +383,50 @@ var ViewModel = function() {
 
 
         });
+    };*/
+
+    this.showAll = function() {
+        console.log("clicked show all");
+        self.decades([]);
+        self.architect([]);
+        self.access([]);
+        self.search("");
+
+
     };
 
+    this.clearMap = function() {
+        console.log("clicked clearMap");
+        self.decades([]);
+        self.architect([]);
+        self.access([]);
+        self.search("");
+        self.placeList().forEach(function(placeObject) {
+            //reset "exhibit" in each places to "false" at head of evaluation loop;
+            //This will be evaluated filter-by-filter;
+            placeObject.exhibit(false);
+        });
+        self.makeMarkers();
+    };
+
+    //subscribe all filter & search to run evaluateExhibit
+    self.decades.subscribe(self.evaluateExhibit);
+    self.architect.subscribe(self.evaluateExhibit);
+    self.access.subscribe(self.evaluateExhibit);
+    self.search.subscribe(self.evaluateExhibit);
+
+    //load "masterList" TODO api load
     self.sortPlaces(masterList);
-    //change ko "search" to blank string prompts placing all markers.
-    self.search("");
+
+    //change ko "access" to load all "non private" "o", "t", "e" at load.
+
+    self.access(["o", "t", "e"]);
 };
 
+ko.applyBindings(new ViewModel());
 
 
-
-var Marker = function(map, lastName, lat, lon, street) {
+/*var Marker = function(map, lastName, lat, lon, street) {
 
     this.lastName = ko.observable(lastName);
     this.lat = ko.observable(lat);

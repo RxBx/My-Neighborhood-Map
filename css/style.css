@@ -11,12 +11,73 @@
     margin: 0;
   }
 
-#clearButton {
-  height:100%;
-  width: 5vw;
-  background-color: orange;
-  display: inline-block;
-}
+#showAllButton {
+   border-top: 1px solid #96d1f8;
+   background: #00FFF5;
+   background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#ffffff));
+   background: -webkit-linear-gradient(top, #00FFF5, #ffffff);
+   background: -moz-linear-gradient(top, #ffffff, #ffffff);
+   background: -ms-linear-gradient(top, #ffffff, #ffffff);
+   background: -o-linear-gradient(top, #ffffff, #ffffff);
+   padding: 2px 4px;
+   -webkit-border-radius: 0px;
+   -moz-border-radius: 0px;
+   border-radius: 0px;
+   -webkit-box-shadow: rgba(0,0,0,1) 0 1px 0;
+   -moz-box-shadow: rgba(0,0,0,1) 0 1px 0;
+   box-shadow: rgba(0,0,0,1) 0 1px 0;
+   text-shadow: rgba(0,0,0,.4) 0 1px 0;
+   color: #000000;
+   font-size: 8px;
+   font-family: Helvetica, Arial, Sans-Serif;
+   text-decoration: none;
+   vertical-align: middle;
+   width: 5vw;
+   }
+#showAllButton:hover {
+   border-top-color: #858585;
+   background: #858585;
+   color: #000000;
+   }
+#showAllButton:active {
+   border-top-color: #ff0000;
+   background: #ff0000;
+   }
+
+
+#clearMap {
+   border-top: 1px solid #96d1f8;
+   background: #00FFF5;
+   background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#ffffff));
+   background: -webkit-linear-gradient(top, #bbb, #ffffff);
+   background: -moz-linear-gradient(top, #ffffff, #ffffff);
+   background: -ms-linear-gradient(top, #ffffff, #ffffff);
+   background: -o-linear-gradient(top, #ffffff, #ffffff);
+   padding: 2px 4px;
+   -webkit-border-radius: 0px;
+   -moz-border-radius: 0px;
+   border-radius: 0px;
+   -webkit-box-shadow: rgba(0,0,0,1) 0 1px 0;
+   -moz-box-shadow: rgba(0,0,0,1) 0 1px 0;
+   box-shadow: rgba(0,0,0,1) 0 1px 0;
+   text-shadow: rgba(0,0,0,.4) 0 1px 0;
+   color: #000000;
+   font-size: 8px;
+   font-family: Helvetica, Arial, Sans-Serif;
+   text-decoration: none;
+   vertical-align: middle;
+   width: 5vw;
+   }
+#clearMap:hover {
+   border-top-color: #858585;
+   background: #858585;
+   color: #000000;
+   }
+#clearMap:active {
+   border-top-color: #ff0000;
+   background: #ff0000;
+   }
+
   #selections {
       /*position: absolute;*/
       /*height: 100%;*/

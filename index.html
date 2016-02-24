@@ -16,7 +16,9 @@
 <body>
     <div id="selections">
         <div id="searchDiv">
-            <p>Search? <input type="text" id="search" data-bind="textInput: search" /><div id="clearButton">Clear</div></p>
+            <p>Search? <input type="text" id="search" data-bind="textInput: search" /></p>
+            <div id="showAllButton" data-bind="click: showAll">Show All</div>
+            <div id="clearMap" data-bind="click: clearMap">Clear Map</div>
         </div>
         <div id="decadeDiv">
             <p>Decade?
@@ -45,7 +47,7 @@
             <p>Access?
                 <input type="checkbox" name="access" value="o" data-bind="checked: access"/>Public
                 <input type="checkbox" name="access" value="t" data-bind="checked: access"/>Tours/Appointments
-                <input type="checkbox" name="access" value="e" data-bind="checked: access"/>Exterior Access
+                <input type="checkbox" name="access" value="e" data-bind="checked: access"/>Exterior View
                 <input type="checkbox" name="access" value="p" data-bind="checked: access"/>Private
             </p>
         </div>
@@ -53,7 +55,7 @@
     <!-- LOCATION LIST  -->
     <div id="overlay-list">
         <ul data-bind="foreach: placeList">
-            <li data-bind="visible: $data.exhibit, text: name"></li>
+            <li data-bind="visible: $data.exhibit, text: name, click: $parent.infoWindowOpener"></li>
         </ul>
     </div>
     <!-- MAP  -->

@@ -316,7 +316,7 @@ var masterList = [{
 	"name": "Neutra VDL Studio and Residences",
 	"address1": "2300 Silver Lake Boulevard",
 	"city": "Los Angeles",
-	"access": "o",
+	"access": "t",
 	"architect": "Richard Neutra",
 	"Case Study": false,
 	"year": 1964
@@ -597,7 +597,7 @@ var masterList = [{
 }, {
 	"name": "Reiner-Burchill Residence, aka 'Silvertop'",
 	"address1": "2138 Micheltorena Street",
-	"city": "West Hollywood",
+	"city": "Los Angeles",
 	"access": "p",
 	"architect": "John Lautner",
 	"Case Study": false,
@@ -719,7 +719,7 @@ var masterList = [{
 	"year": 1981
 }, {
 	"name": "World Savings and Loan building / Wells Fargo Bank",
-	"address1": "310064 Riverside Dr.",
+	"address1": "10064 Riverside Dr.",
 	"city": "Los Angeles",
 	"access": "o",
 	"architect": "Frank Gehry",
@@ -761,7 +761,7 @@ var masterList = [{
 }, {
 	"name": "Chiat/Day Building",
 	"address1": "340 Main St",
-	"city": "Los Angeles",
+	"city": "Venice",
 	"access": "e",
 	"architect": "Frank Gehry",
 	"Case Study": false,
