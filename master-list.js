@@ -144,15 +144,6 @@ var masterList = [{
 	"Case Study": false,
 	"year": 1949
 }, {
-
-	"name": "E. Janson House",
-	"address1": "8704 Skyline Dr",
-	"city": "Los Angeles",
-	"access": "p",
-	"architect": "R. M. Schindler",
-	"Case Study": false,
-	"year": 1949
-}, {
 	"name": "A. Tischler House",
 	"address1": "175 Greenfield Ave.",
 	"city": "Los Angeles",
@@ -337,7 +328,7 @@ var masterList = [{
 	"Case Study": false,
 	"year": 1939
 }, {
-	"name": "Olan G. and Aida T. Hafley House Richard Neutra",
+	"name": "Olan G. and Aida T. Hafley House",
 	"address1": "5561 East La Pasada Street",
 	"city": "Long Beach",
 	"access": "p",

@@ -80,7 +80,7 @@ var ViewModel = function() {
             lat: 34.0500,
             lng: -118.2500
         },
-        zoom: 9
+        zoom: 8
     });
 
     this.infowindow = new google.maps.InfoWindow({
@@ -100,10 +100,20 @@ var ViewModel = function() {
     //initial value; cleared at end of load to prompt marker placement
     this.search = ko.observable("");
     //.extend({ rateLimit: { timeout: 100, method: "notifyWhenChangesStop" } });
-
+    //Goes through each place in placeList to see if it matches filters/search if present;
+    //if so, it sets the "exhibit" to "true"
     this.evaluateExhibit = function() {
-        //Goes through each place in placeList to see if it matches filters/search if present;
-        //if so, it sets the "exhibit" to "true"
+        //clears any pending "timeout" a user has invoked a selection to evaluatExhibit
+        if (window.closeSelections) {
+            window.clearTimeout(window.closeSelections);
+        }
+        //sets a new 4 sec timer to auto close "search/filters" if user doesn't engage
+        window.closeSelections = setTimeout(function() {
+            $('#selections').animate({
+                top: '100%'
+            }, 250);
+        }, 4000);
+
         self.placeList().forEach(function(placeObject) {
             //reset "exhibit" in each places to "false" at head of evaluation loop;
             //This will be evaluated filter-by-filter;
@@ -187,7 +197,7 @@ var ViewModel = function() {
 
         });
 
-        self.makeMarkers();
+        self.setMarkers();
     };
 
     /*
@@ -224,7 +234,7 @@ var ViewModel = function() {
         };
     };
 
-    this.makeMarkers = function() {
+    this.setMarkers = function() {
         //self.placeList().forEach(function(placeObject, index) {
         //  self.makeMarker(placeObject, index);
         //};
@@ -397,6 +407,9 @@ var ViewModel = function() {
 
     this.clearMap = function() {
         console.log("clicked clearMap");
+        if (window.closeSelections) {
+                window.clearTimeout(window.closeSelections);
+            }
         self.decades([]);
         self.architect([]);
         self.access([]);
@@ -406,7 +419,29 @@ var ViewModel = function() {
             //This will be evaluated filter-by-filter;
             placeObject.exhibit(false);
         });
-        self.makeMarkers();
+        self.setMarkers();
+    };
+
+    this.toggleSelections = function() {
+        console.log($('#selections').position().top);
+        console.log("screen height: " + window.innerHeight);
+        if ($('#selections').position().top === window.innerHeight / 2) {
+            if (window.closeSelections) {
+                window.clearTimeout(window.closeSelections);
+            }
+            $('#selections').animate({
+                top: '100%'
+            }, 250);
+        } else {
+            $('#selections').animate({
+                top: '50%'
+            }, 250);
+            window.closeSelections = setTimeout(function() {
+                $('#selections').animate({
+                    top: '100%'
+                }, 250);
+            }, 5000);
+        }
     };
 
     //subscribe all filter & search to run evaluateExhibit

@@ -8,104 +8,158 @@
   }
 
   p {
-    margin: 0;
+      margin: 0;
   }
 
-#showAllButton {
-   border-top: 1px solid #96d1f8;
-   background: #00FFF5;
-   background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#ffffff));
-   background: -webkit-linear-gradient(top, #00FFF5, #ffffff);
-   background: -moz-linear-gradient(top, #ffffff, #ffffff);
-   background: -ms-linear-gradient(top, #ffffff, #ffffff);
-   background: -o-linear-gradient(top, #ffffff, #ffffff);
-   padding: 2px 4px;
-   -webkit-border-radius: 0px;
-   -moz-border-radius: 0px;
-   border-radius: 0px;
-   -webkit-box-shadow: rgba(0,0,0,1) 0 1px 0;
-   -moz-box-shadow: rgba(0,0,0,1) 0 1px 0;
-   box-shadow: rgba(0,0,0,1) 0 1px 0;
-   text-shadow: rgba(0,0,0,.4) 0 1px 0;
-   color: #000000;
-   font-size: 8px;
-   font-family: Helvetica, Arial, Sans-Serif;
-   text-decoration: none;
-   vertical-align: middle;
-   width: 5vw;
-   }
-#showAllButton:hover {
-   border-top-color: #858585;
-   background: #858585;
-   color: #000000;
-   }
-#showAllButton:active {
-   border-top-color: #ff0000;
-   background: #ff0000;
-   }
+  .container {
+      width: 100%;
+      height: 100%;
+  }
 
-
-#clearMap {
-   border-top: 1px solid #96d1f8;
-   background: #00FFF5;
-   background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#ffffff));
-   background: -webkit-linear-gradient(top, #bbb, #ffffff);
-   background: -moz-linear-gradient(top, #ffffff, #ffffff);
-   background: -ms-linear-gradient(top, #ffffff, #ffffff);
-   background: -o-linear-gradient(top, #ffffff, #ffffff);
-   padding: 2px 4px;
-   -webkit-border-radius: 0px;
-   -moz-border-radius: 0px;
-   border-radius: 0px;
-   -webkit-box-shadow: rgba(0,0,0,1) 0 1px 0;
-   -moz-box-shadow: rgba(0,0,0,1) 0 1px 0;
-   box-shadow: rgba(0,0,0,1) 0 1px 0;
-   text-shadow: rgba(0,0,0,.4) 0 1px 0;
-   color: #000000;
-   font-size: 8px;
-   font-family: Helvetica, Arial, Sans-Serif;
-   text-decoration: none;
-   vertical-align: middle;
-   width: 5vw;
-   }
-#clearMap:hover {
-   border-top-color: #858585;
-   background: #858585;
-   color: #000000;
-   }
-#clearMap:active {
-   border-top-color: #ff0000;
-   background: #ff0000;
-   }
-
-  #selections {
-      /*position: absolute;*/
-      /*height: 100%;*/
-      /*width: 20%;*/
-      /*left: 80%;*/
+  .searchFilterRevealHide {
+      width: 30%;
+      height: 5%;
+      position: fixed;
+      top: 45%;
+      right: 0%;
       z-index: 1;
-      background-color: rgba(255, 255, 0, 0.5);
+      background-color: rgba(255, 255, 0, 1);
+  }
+
+  .selections {
+      width: 100%;
+      height: 100%;
+      position: fixed;
+      top: 100%;
+      z-index: 1;
+      background-color: rgba(255, 255, 0, 1);
+  }
+
+  .selections p {
+    font-family: arial;
+  font-size: 3.5vh;
+  }
+
+  .mainView {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+  }
+
+  #showAllButton {
+      border-top: 1px solid #96d1f8;
+      background: #00FFF5;
+      background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#ffffff));
+      background: -webkit-linear-gradient(top, #00FFF5, #ffffff);
+      background: -moz-linear-gradient(top, #ffffff, #ffffff);
+      background: -ms-linear-gradient(top, #ffffff, #ffffff);
+      background: -o-linear-gradient(top, #ffffff, #ffffff);
+      padding: 2px 4px;
+      -webkit-border-radius: 0px;
+      -moz-border-radius: 0px;
+      border-radius: 0px;
+      -webkit-box-shadow: rgba(0, 0, 0, 1) 0 1px 0;
+      -moz-box-shadow: rgba(0, 0, 0, 1) 0 1px 0;
+      box-shadow: rgba(0, 0, 0, 1) 0 1px 0;
+      text-shadow: rgba(0, 0, 0, .4) 0 1px 0;
+      color: #000000;
+      font-size: 8px;
+      font-family: Helvetica, Arial, Sans-Serif;
+      text-decoration: none;
+      vertical-align: middle;
+      width: 5vw;
+  }
+
+  #showAllButton:hover {
+      border-top-color: #858585;
+      background: #858585;
+      color: #000000;
+  }
+
+  #showAllButton:active {
+      border-top-color: #ff0000;
+      background: #ff0000;
+  }
+
+  #clearMap {
+      border-top: 1px solid #96d1f8;
+      background: #00FFF5;
+      background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#ffffff));
+      background: -webkit-linear-gradient(top, #bbb, #ffffff);
+      background: -moz-linear-gradient(top, #ffffff, #ffffff);
+      background: -ms-linear-gradient(top, #ffffff, #ffffff);
+      background: -o-linear-gradient(top, #ffffff, #ffffff);
+      padding: 2px 4px;
+      -webkit-border-radius: 0px;
+      -moz-border-radius: 0px;
+      border-radius: 0px;
+      -webkit-box-shadow: rgba(0, 0, 0, 1) 0 1px 0;
+      -moz-box-shadow: rgba(0, 0, 0, 1) 0 1px 0;
+      box-shadow: rgba(0, 0, 0, 1) 0 1px 0;
+      text-shadow: rgba(0, 0, 0, .4) 0 1px 0;
+      color: #000000;
+      font-size: 8px;
+      font-family: Helvetica, Arial, Sans-Serif;
+      text-decoration: none;
+      vertical-align: middle;
+      width: 5vw;
+  }
+
+  #clearMap:hover {
+      border-top-color: #858585;
+      background: #858585;
+      color: #000000;
+  }
+
+  #clearMap:active {
+      border-top-color: #ff0000;
+      background: #ff0000;
   }
 
   #selections p {
-    margin: 0 auto;
+      margin: 0 auto;
   }
 
+  .mainView__header {
+      height: 10%;
+      width: 100%;
+      float: left;
+  }
 
+  .mainView__header h2 {
+      font-size: 3.5vh;
+      text-align: center;
+      margin-top: .5vh;
+      margin-bottom: .5vh;
+      font-family: arial;
+  }
 
-  #overlay-list {
+  .mainView__mapHolder {
+      height: 40%;
+      width: 100%;
+      /*width: 80%;*/
+      float: left;
+      /*z-index: 0;*/
+  }
+
+  .mainView__mapHolder__map {
+      width: 100%;
+      height: 100%;
+  }
+
+  .mainView__overlay-list {
       /*position: absolute;*/
-      width: 20%;
+      height: 50%;
+      width: 100%;
+      /*width: 80%;*/
+      float: left;
+      /*z-index: 0;*/
       /*left: 80%;*/
       /*z-index: 1;*/
       background-color: rgba(255, 0, 0, 0.5);
-      float: right;
+      overflow-y: scroll;
   }
-
-  #mapHolder,
-  #map {
-      height: 100%;
-      /*width: 80%;*/
-      /*float: left;*/
-      /*z-index: 0;*/
-  }
+.mainView__overlay-list li {
+  font-family: arial;
+  font-size: 3.5vh;
+}

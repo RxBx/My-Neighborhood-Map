@@ -14,55 +14,67 @@
 </head>
 
 <body>
-    <div id="selections">
-        <div id="searchDiv">
-            <p>Search? <input type="text" id="search" data-bind="textInput: search" /></p>
-            <div id="showAllButton" data-bind="click: showAll">Show All</div>
-            <div id="clearMap" data-bind="click: clearMap">Clear Map</div>
+    <div id="container" class="container">
+        <div id="searchFilterRevealHide" class="searchFilterRevealHide" data-bind="click: toggleSelections">Search/Filters
         </div>
-        <div id="decadeDiv">
-            <p>Decade?
-                <input type="checkbox" name="decade" value="1920" data-bind="checked: decades"/>1920s
-                <input type="checkbox" name="decade" value="1930" data-bind="checked: decades"/>1930s
-                <input type="checkbox" name="decade" value="1940" data-bind="checked: decades"/>1940s
-                <input type="checkbox" name="decade" value="1950" data-bind="checked: decades"/>1950s
-                <input type="checkbox" name="decade" value="1960" data-bind="checked: decades"/>1960s
-                <input type="checkbox" name="decade" value="1970" data-bind="checked: decades"/>1970s
-                <input type="checkbox" name="decade" value="1980" data-bind="checked: decades"/>1980s
-                <input type="checkbox" name="decade" value="1990" data-bind="checked: decades"/>1990s
-                <input type="checkbox" name="decade" value="2000" data-bind="checked: decades"/>2000s
-            </p>
+        <div id="selections" class="selections">
+            <div id="searchDiv">
+                <p>Search?
+                    <input type="text" id="search" data-bind="textInput: search" />
+                </p>
+                <div id="showAllButton" data-bind="click: showAll">Show All</div>
+                <div id="clearMap" data-bind="click: clearMap">Clear Map</div>
+            </div>
+            <div id="decadeDiv">
+                <p>Decade?
+                    <input type="checkbox" name="decade" value="1920" data-bind="checked: decades" />1920s
+                    <input type="checkbox" name="decade" value="1930" data-bind="checked: decades" />1930s
+                    <input type="checkbox" name="decade" value="1940" data-bind="checked: decades" />1940s
+                    <input type="checkbox" name="decade" value="1950" data-bind="checked: decades" />1950s
+                    <input type="checkbox" name="decade" value="1960" data-bind="checked: decades" />1960s
+                    <input type="checkbox" name="decade" value="1970" data-bind="checked: decades" />1970s
+                    <input type="checkbox" name="decade" value="1980" data-bind="checked: decades" />1980s
+                    <input type="checkbox" name="decade" value="1990" data-bind="checked: decades" />1990s
+                    <input type="checkbox" name="decade" value="2000" data-bind="checked: decades" />2000s
+                </p>
+            </div>
+            <div id="architectDiv">
+                <p>Architect?
+                    <input type="checkbox" name="architect" value="Frank Lloyd Wright" data-bind="checked: architect" />Frank Lloyd Wright
+                    <input type="checkbox" name="architect" value="Schindler" data-bind="checked: architect" />Schindler
+                    <input type="checkbox" name="architect" value="Neutra" data-bind="checked: architect" />Neutra
+                    <input type="checkbox" name="architect" value="Lautner" data-bind="checked: architect" />Lautner
+                    <input type="checkbox" name="architect" value="Gehry" data-bind="checked: architect" />Gehry
+                    <input type="checkbox" name="architect" value="Case Study" data-bind="checked: architect" />Case Study
+                </p>
+            </div>
+            <div id="publicDiv">
+                <p>Access?
+                    <input type="checkbox" name="access" value="o" data-bind="checked: access" />Public
+                    <input type="checkbox" name="access" value="t" data-bind="checked: access" />Tours/Appointments
+                    <input type="checkbox" name="access" value="e" data-bind="checked: access" />Exterior View
+                    <input type="checkbox" name="access" value="p" data-bind="checked: access" />Private
+                </p>
+            </div>
         </div>
-        <div id="architectDiv">
-            <p>Architect?
-                <input type="checkbox" name="architect" value="Frank Lloyd Wright" data-bind="checked: architect"/>Frank Lloyd Wright
-                <input type="checkbox" name="architect" value="Schindler" data-bind="checked: architect"/>Schindler
-                <input type="checkbox" name="architect" value="Neutra" data-bind="checked: architect"/>Neutra
-                <input type="checkbox" name="architect" value="Lautner" data-bind="checked: architect"/>Lautner
-                <input type="checkbox" name="architect" value="Gehry" data-bind="checked: architect"/>Gehry
-                <input type="checkbox" name="architect" value="Case Study" data-bind="checked: architect"/>Case Study
-            </p>
-        </div>
-        <div id="publicDiv">
-            <p>Access?
-                <input type="checkbox" name="access" value="o" data-bind="checked: access"/>Public
-                <input type="checkbox" name="access" value="t" data-bind="checked: access"/>Tours/Appointments
-                <input type="checkbox" name="access" value="e" data-bind="checked: access"/>Exterior View
-                <input type="checkbox" name="access" value="p" data-bind="checked: access"/>Private
-            </p>
+        <div id="mainView" class="mainView">
+            <div id="header" class="mainView__header">
+            <h2>Almost&nbsp;100&nbsp;Los&nbsp;Angeles Architectural&nbsp;Landmarks</h2>
+            </div>
+
+            <!-- MAP  -->
+            <div id="mapHolder" class="mainView__mapHolder">
+                <div id="map" class="mainView__mapHolder__map"></div>
+            </div>
+            <!-- LOCATION LIST  -->
+            <div id="overlay-list" class="mainView__overlay-list">
+                <ul data-bind="foreach: placeList">
+                    <li data-bind="visible: $data.exhibit, text: name, click: $parent.infoWindowOpener"></li>
+                </ul>
+            </div>
         </div>
     </div>
-    <!-- LOCATION LIST  -->
-    <div id="overlay-list">
-        <ul data-bind="foreach: placeList">
-            <li data-bind="visible: $data.exhibit, text: name, click: $parent.infoWindowOpener"></li>
-        </ul>
-    </div>
-    <!-- MAP  -->
-    <div id="mapHolder">
-        <div id="map"></div>
-    </div>
-     <script src="master-list.js" type="text/javascript"></script>
+    <script src="master-list.js" type="text/javascript"></script>
     <script src="js/script.js" type="text/javascript">
     </script>
 </body>
