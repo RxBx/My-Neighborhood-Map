@@ -1,46 +1,10 @@
 "use strict";
 
-//MODEL DATA
-var modelStarInfo = [{
-    firstName: "Bob",
-    lastName: "Johnson",
-    street: "123 Main St",
-    lat: 34.0519079,
-    lng: -118.243893
-}, {
-    firstName: "Ron",
-    lastName: "Jones",
-    street: "1738 Hyperion Ave",
-    lat: 34.0957642,
-    lng: -118.2770932
-}, {
-    firstName: "Frank",
-    lastName: "Baker",
-    street: "2600 beverly blvd",
-    lat: 34.0694876,
-    lng: -118.2768228
-}];
-
-//LOCATION FOR MAPPING
-var modelLocale = {
-    city: "Los Angeles",
-    state: 'CA',
-    country: 'USA'
-};
-
 //GOOGLE Geocode API URL
 var geocodeURL = "https://maps.googleapis.com/maps/api/geocode/json"; //to access geocode API
 
 // Google Geocode API key - different from Map key (Currently NOT used)
 var apiKeyGeocode = "AIzaSyBkBk3maFmugZtnSWKTkFMK2CXIe0c_20k";
-
-//DEAD GLOBAL VARIABLES FROM EARLIER SPAGHETTI CODE
-//var street = "";
-//var lat; // latitude value
-//var lng; // longitude value
-//var myLatLng; // data object for lat & long
-//var map; // google map object
-//var infoWindow; // marker
 
 //KNOCKOUT VIEWMODEL
 var ViewModel = function() {
@@ -80,8 +44,15 @@ var ViewModel = function() {
             lat: 34.0500,
             lng: -118.2500
         },
-        zoom: 8
+        zoom: 8,
+        streetViewControl: false,
+        mapTypeControl: false,
+        zoomControlOptions: {
+            position: google.maps.ControlPosition.LEFT_BOTTOM
+        },
     });
+
+    this.markerBounds = new google.maps.LatLngBounds();
 
     this.infowindow = new google.maps.InfoWindow({
         content: ""
@@ -89,14 +60,65 @@ var ViewModel = function() {
     });
 
     this.placeList = ko.observableArray([]);
-    //.extend({ rateLimit: { timeout: 100, method: "notifyWhenChangesStop" } });
+    //triggers "scrollable" message in HTML for header for "Place List"
+    this.listScroll = ko.observable(false);
+    //Compares height of Place List to height of list div, and if larger, triggers "scroll" message in HTML
+    this.listScrollEval = function() {
+        var listHeight = $('#overlay-list_listContents ul').outerHeight(true);
+        var listDivHeight = $('#overlay-list_listContents').height();
+        if (listHeight > listDivHeight) {
+            self.listScroll(true);
+        } else {
+            self.listScroll(false);
+        }
+    };
+
+    this.noResults = ko.observable(false);
+
+    this.noResultsEval = function() {
+        var totalListLength = $('#mainView__overlay-list_listContents_ul li').length;
+        var hiddenListLength = $('#mainView__overlay-list_listContents_ul li:hidden').length;
+
+        if (hiddenListLength === totalListLength) {
+            console.log
+            self.noResults(true);
+        } else { self.noResults(false); }
+    };
+
+
     this.decades = ko.observableArray([]);
-    //.extend({ rateLimit: { timeout: 100, method: "notifyWhenChangesStop" } });
+
+    this.decades1920 = ko.observable(false);
+    this.decades1930 = ko.observable(false);
+    this.decades1940 = ko.observable(false);
+    this.decades1950 = ko.observable(false);
+    this.decades1960 = ko.observable(false);
+    this.decades1970 = ko.observable(false);
+    this.decades1980 = ko.observable(false);
+    this.decades1990 = ko.observable(false);
+    this.decades2000 = ko.observable(false);
+
     this.architect = ko.observableArray([]);
-    //.extend({ rateLimit: { timeout: 100, method: "notifyWhenChangesStop" } });
+
+    this.wright = ko.observable(false);
+    this.schindler = ko.observable(false);
+    this.neutra = ko.observable(false);
+    this.lautner = ko.observable(false);
+    this.gehry = ko.observable(false);
+
+    this.caseStudy = ko.observable(false);
+
+
     //initially select only non-private addresses
     this.access = ko.observableArray([]);
-    //.extend({ rateLimit: { timeout: 100, method: "notifyWhenChangesStop" } });
+
+    this.public = ko.observable(false);
+    this.tours = ko.observable(false);
+    this.exterior = ko.observable(false);
+    this.private = ko.observable(false);
+
+    //this.casestudy = ko.observableArray([]);
+
     //initial value; cleared at end of load to prompt marker placement
     this.search = ko.observable("");
     //.extend({ rateLimit: { timeout: 100, method: "notifyWhenChangesStop" } });
@@ -108,11 +130,15 @@ var ViewModel = function() {
             window.clearTimeout(window.closeSelections);
         }
         //sets a new 4 sec timer to auto close "search/filters" if user doesn't engage
-        window.closeSelections = setTimeout(function() {
+        /*window.closeSelections = setTimeout(function() {
             $('#selections').animate({
                 top: '100%'
             }, 250);
-        }, 4000);
+            $('#searchFilterRevealHide').css({
+                'background-color':'#ff0'
+            });
+            $('#searchFilterRevealHideText').text('Search/Filters');
+        }, 4000);*/
 
         self.placeList().forEach(function(placeObject) {
             //reset "exhibit" in each places to "false" at head of evaluation loop;
@@ -132,56 +158,92 @@ var ViewModel = function() {
                         placeObject.exhibit(true);
                     }
                 }
-            } else //if no access filter letter is present (empty array) then set all exhibit to "true"
-            //and proceed to next filter set.
+            } else //if no access filter letter is present (empty array) then set any placeObject
+            //to exhibit: "true" and proceed to next filter set.
             {
                 placeObject.exhibit(true);
             }
-            //check for architect filter & Case Study on placeObjects already "true" from prior filters
-            //Examines 2 attributes: "Case Study" or specific "architect"
-            //"Case Study" is a boolean indicating whether home was built as part of special architectural initiative
-            //"Architect" may be one of several high-profile architects
-            if ((self.architect().length > 0) && placeObject.exhibit() === true) {
+
+            self.evalCsIgnoreAr = function(placeObject) {
+                if (placeObject.caseStudy === true) {
+                    placeObject.exhibit(true);
+                } else {
+                    placeObject.exhibit(false);
+                }
+            };
+
+            self.evalArIgnoreCs = function(placeObject) {
                 placeObject.exhibit(false);
-                //evaluate if Case Study is checked & matches.
-                if (placeObject.caseStudy === true && self.architect().indexOf("Case Study") > -1) {
+                //match detector value
+                var archMatch = false;
+                self.architect().forEach(function(element) {
+                    //seek first match between placeObject's architect, & KO Obs Array of select architects
+                    if ((placeObject.architect.indexOf(element) > -1) && (archMatch !== true)) {
+                        archMatch = true;
+                    }
+                });
+                if (archMatch === true) {
                     placeObject.exhibit(true);
                 }
-                //for placeObjects not matched to "Case Study", checks for match of checked architect &
-                // placeObject's "architect"
-                var archMatch = false;
-                if (placeObject.exhibit() === false) {
-                    self.architect().forEach(function(element) {
-                        //console.log("builder loop");
-                        if ((placeObject.architect.indexOf(element) > -1) && (archMatch !== true)) {
-                            archMatch = true;
-                            //console.log("archMatch true for: " + element);
-                        }
-                        if (archMatch === true) {
-                            placeObject.exhibit(true);
-                        }
-                    });
+            };
+            //Case Study / Architect filter
+            //evaluate if Case Study is checked on placeObject already "true" from prior filter
+            //"Case Study" is a boolean indicating whether home was built as part of special architectural initiative
+            if (placeObject.exhibit() === true) {
+                //When "caseStudy" is selected, but architects are NOT selected
+                if (self.caseStudy() === true && self.architect().length === 0) { //1
+                    //CASE: CS+ Ar- SO eval CS but ignore Ar
+                    self.evalCsIgnoreAr(placeObject);
+
+                    //CASE: CS- Ar+ SO eval Ar but ignore CS
+                } else if (self.caseStudy() === false && self.architect().length > 0) { //3
+                    self.evalArIgnoreCs(placeObject);
+                    //CASE: CS+ AR+ SO eval Ar and eval Cs; eval Ar ONLY if the Cs eval is neg.
+                } else if (self.caseStudy() === true && self.architect().length > 0) { //2
+                    //check for CS+ match
+                    self.evalCsIgnoreAr(placeObject);
+                    //if CS+ match fails & placeObject.exhibit set "false", then check Ar+ match
+                    if (placeObject.exhibit() === false) {
+                        self.evalArIgnoreCs(placeObject);
+                    }
                 }
             }
 
-            //check for decades filter
 
-            if ((self.decades().length > 0) && (placeObject.exhibit() === true)) {
-                var decadeMatch = false;
-                placeObject.exhibit(false);
-                //console.log("place year: " + placeObject.year);
-                var placeDecade = Math.floor(placeObject.year / 10) * 10;
-                //console.log("placeDecade: " + placeDecade);
-                for (var i = 0, len = self.decades().length; i < len; i++) {
-                    //console.log("Decade checkbox: " + self.decades()[i]);
-                    var matcher = self.decades()[i];
-                    if ((matcher == placeDecade) || (decadeMatch === true)) {
-                        decadeMatch = true;
-                        //console.log("match");
+            //check for decades filter
+            //filters already "exhibit:true" placeholder IF decade has been selected
+
+            if (placeObject.exhibit() === true) {
+                if (self.decades().length > 0) {
+                    //sets placeObject exhibit to "false" pending filter check loop
+                    placeObject.exhibit(false);
+                    //holds value if decade match is detected; starts "false"
+                    var decadeMatch = false;
+                    //extracts number for decade of build
+                    var placeDecade = Math.floor(placeObject.year / 10) * 10;
+                    //comparison loop
+                    for (var i = 0, len = self.decades().length; i < len; i++) {
+                        //sets value to decade to be checked
+                        var matcher = self.decades()[i];
+                        //sets a "decadeMatch" to true if it finds match OR if prior loop found match
+                        if ((matcher == placeDecade) || (decadeMatch === true)) {
+                            decadeMatch = true;
+                        }
+                        //updates booleans on ko decades observables to trigger css button styling
+                        /*if (matcher == 1920) { self.decades1920(true); }
+                        if (matcher == 1930) { self.decades1930(true); }
+                        if (matcher == 1940) { self.decades1940(true); }
+                        if (matcher == 1950) { self.decades1950(true); }
+                        if (matcher == 1960) { self.decades1960(true); }
+                        if (matcher == 1970) { self.decades1970(true); }
+                        if (matcher == 1980) { self.decades1980(true); }
+                        if (matcher == 1990) { self.decades1990(true); }
+                        if (matcher == 2000) { self.decades2000(true); }*/
                     }
-                }
-                if (decadeMatch === true) {
-                    placeObject.exhibit(true);
+                    //if comparison loop has detected a decadeMatch, then sets placeObject.exhibit to "true"
+                    if (decadeMatch === true) {
+                        placeObject.exhibit(true);
+                    }
                 }
             }
 
@@ -196,9 +258,25 @@ var ViewModel = function() {
             }
 
         });
-
+        //check to see if list overflows div; if so set to "true"
+        self.listScrollEval();
+        //check to see if list is empty; if so set "true"
+        self.noResultsEval();
+        //close any infowindow
+        self.infowindow.close();
+        //refresh bounds
+        self.markerBounds = new google.maps.LatLngBounds();
+        //run marker setter
         self.setMarkers();
+        //var zoom = self.map.getZoom();
+        if (self.map.getZoom() > 11) {
+            self.map.setZoom(11);
+        }
+        console.log(self.map.getZoom());
     };
+
+
+
 
     /*
         $.ajax({
@@ -238,24 +316,78 @@ var ViewModel = function() {
         //self.placeList().forEach(function(placeObject, index) {
         //  self.makeMarker(placeObject, index);
         //};
-        console.log("running makeMarkers");
+        console.log("running setMarkers");
         //sets looping values external/prior to "markerSpinner" for special purpose looping in "markerSpinner"
-        var len = self.placeList().length;
-        var counter = 0;
-        //
-        self.markerSpinner(counter, len);
+        self.placeList().forEach(self.markerSpinner);
+    };
+
+    this.geocode = function(item) {
+        var address1 = item.address1;
+        //console.log("geocoding counter " + counter);
+        var city = item.city;
+        var addressArray = address1.split(" "); //geting rid of white spaces
+        var streetAddressQueriable = addressArray[0]; //begin piece of API URL
+        for (var i = 1; i < addressArray.length; i++) {
+            streetAddressQueriable += "+" + addressArray[i]; //reconsituting for API URL
+        }
+
+        var addressStringAddress = streetAddressQueriable + ",+" + city + ",+CA";
+        var geocodeDataAddress = {
+            address: addressStringAddress,
+            key: apiKeyGeocode
+        };
+
+
+        $.getJSON(geocodeURL, geocodeDataAddress, function(data) {
+            console.log("geocode status: " + data.status);
+            var LatLng;
+            if (data.status === "OK") {
+                LatLng = data.results[0].geometry.location;
+                //var currentMarker = setMarker(); //put the marker on the map using geocode lat lng
+
+                item.marker.setPosition(LatLng);
+                //var item = item;
+
+
+                item.marker.addListener('click', function() {
+
+                    self.infoWindowOpener(item);
+                });
+            } else if (data.status === "OVER_QUERY_LIMIT") {
+                //if Geocoder hits limit, re-submit SAME counter number, to re-run the Geocode request
+                self.geocode(item);
+            } else {
+                //Other Geocode errors prompts message
+                console.log("geocode error status: " + data.status);
+            }
+
+            if ((item.exhibit() === true) && (item.marker.getPosition() !== null)) {
+                console.log('used it');
+                item.marker.setMap(self.map);
+                self.markerBounds.extend(item.marker.getPosition());
+                self.map.fitBounds(self.markerBounds);
+
+                if (self.map.getZoom() > 11) {
+                    self.map.setZoom(11);
+                }
+                console.log(self.map.getZoom());
+            } else {
+                console.log("didn't use it");
+            }
+
+        });
     };
     //This function on first run, geocodes all markers;
     //on all runs, sets "exhibit===true" markers on map, removes "exhibit===false" markers
     //Geocode's special "staggered loop" structure prevents errors from Geocode API during mass geocoding
     //by sending a fresh Geocode request only after the previous Geocode request has been received "OK"
-    this.markerSpinner = function(counter, len) {
-        console.log("counter " + counter);
+    this.markerSpinner = function(item) {
 
-        if (counter < len) {
+        if ((item.exhibit() === true) && (item.marker.getPosition() === null)) {
+            //TODO: Unmask geocode below, so the markers begin appearing after Google releases
+            self.geocode(item);
 
-            if ((self.placeList()[counter].exhibit() === true) && (self.placeList()[counter].marker.getPosition() === null)) {
-                var address1 = self.placeList()[counter].address1;
+            /*var address1 = self.placeList()[counter].address1;
                 console.log("geocoding counter " + counter);
                 var city = self.placeList()[counter].city;
                 var addressArray = address1.split(" "); //geting rid of white spaces
@@ -263,32 +395,7 @@ var ViewModel = function() {
                 for (var i = 1; i < addressArray.length; i++) {
                     streetAddressQueriable += "+" + addressArray[i]; //reconsituting for API URL
                 }
-                /*var addressStringAddressCensus = address1+','+city+',CA';
 
-                $.getJSON("http://geocoding.geo.census.gov/geocoder/locations/onelineaddress",
-                    {"address":addressStringAddressCensus,
-                    "benchmark":9,
-                    "format":"jsonp"
-                }, function(data)
-                {
-                    var LatLng = {lat: data["result"]["addressMatches"]["coordinates"]["x"],lng: data["result"]["addressMatches"]["coordinates"]["y"]};
-                    self.placeList()[counter].marker.setPosition(LatLng);
-                        var item = self.placeList()[counter];
-                        item.marker.setMap(self.map);
-
-                        item.marker.addListener('click', function() {
-
-                            self.infoWindowOpener(item);
-                        });
-                });
-                 if (self.placeList()[counter].exhibit() === true) {
-
-                        //advance counter so next placeList item gets fed to markerSpinner
-                        counter++;
-                        //submits next request
-                        self.markerSpinner(counter, len);
-
-                    }*/
 
                 var addressStringAddress = streetAddressQueriable + ",+" + city + ",+CA";
                 var geocodeDataAddress = {
@@ -330,19 +437,16 @@ var ViewModel = function() {
                     }
 
                 });
-
-            } else if (self.placeList()[counter].exhibit() === true) {
-                self.placeList()[counter].marker.setMap(self.map);
-                counter++;
-                self.markerSpinner(counter, len);
-            } else {
-                self.placeList()[counter].marker.setMap(null);
-                counter++;
-                self.markerSpinner(counter, len);
-            }
+    */
+        } else if (item.exhibit() === true) {
+            self.markerBounds.extend(item.marker.getPosition());
+            item.marker.setMap(self.map);
+            self.map.fitBounds(self.markerBounds);
+            self.map.panToBounds(self.markerBounds);
 
 
-
+        } else {
+            item.marker.setMap(null);
 
         }
 
@@ -399,6 +503,7 @@ var ViewModel = function() {
         console.log("clicked show all");
         self.decades([]);
         self.architect([]);
+        self.caseStudy(false);
         self.access([]);
         self.search("");
 
@@ -408,23 +513,25 @@ var ViewModel = function() {
     this.clearMap = function() {
         console.log("clicked clearMap");
         if (window.closeSelections) {
-                window.clearTimeout(window.closeSelections);
-            }
-        self.decades([]);
-        self.architect([]);
-        self.access([]);
-        self.search("");
+            window.clearTimeout(window.closeSelections);
+        }
+        //empties filters
+        self.showAll()
+            //sets all items to exhibit:false
         self.placeList().forEach(function(placeObject) {
             //reset "exhibit" in each places to "false" at head of evaluation loop;
             //This will be evaluated filter-by-filter;
             placeObject.exhibit(false);
         });
+        //make sure "scroll" message is off since list is clear
+        self.listScroll(false);
+        self.noResults(true);
         self.setMarkers();
     };
 
     this.toggleSelections = function() {
-        console.log($('#selections').position().top);
-        console.log("screen height: " + window.innerHeight);
+        //console.log($('#selections').position().top);
+        //console.log("screen height: " + window.innerHeight);
         if ($('#selections').position().top === window.innerHeight / 2) {
             if (window.closeSelections) {
                 window.clearTimeout(window.closeSelections);
@@ -432,23 +539,97 @@ var ViewModel = function() {
             $('#selections').animate({
                 top: '100%'
             }, 250);
+            $('#searchFilterRevealHide').css({
+                'background-color': '#ff0'
+            });
+            $('#searchFilterRevealHideText').text('Search/Filters');
         } else {
             $('#selections').animate({
                 top: '50%'
             }, 250);
-            window.closeSelections = setTimeout(function() {
+            $('#searchFilterRevealHide').css({
+                'background-color': '#39e2cb'
+            });
+
+            $('#searchFilterRevealHideText').text('See List');
+
+            /*window.closeSelections = setTimeout(function() {
                 $('#selections').animate({
                     top: '100%'
                 }, 250);
-            }, 5000);
+                $('#searchFilterRevealHide').css({
+                'background-color':'#ff0'
+            });
+                $('#searchFilterRevealHideText').text('Search/Filters');
+            }, 5000);*/
         }
     };
 
-    //subscribe all filter & search to run evaluateExhibit
+    //Update selected Decade KO observables as styling trigger
+    this.updateStyleDecade = function() {
+        self.decades1920(false);
+        self.decades1930(false);
+        self.decades1940(false);
+        self.decades1950(false);
+        self.decades1960(false);
+        self.decades1970(false);
+        self.decades1980(false);
+        self.decades1990(false);
+        self.decades2000(false)
+        for (var i = 0, len = self.decades().length; i < len; i++) {
+            //sets value to decade to be checked
+            var matcher = self.decades()[i];
+
+            //updates booleans on ko decades observables to trigger css button styling
+            if (matcher == 1920) { self.decades1920(true); } else if (matcher == 1930) { self.decades1930(true); } else if (matcher == 1940) { self.decades1940(true); } else if (matcher == 1950) { self.decades1950(true); } else if (matcher == 1960) { self.decades1960(true); } else if (matcher == 1970) { self.decades1970(true); } else if (matcher == 1980) { self.decades1980(true); } else if (matcher == 1990) { self.decades1990(true); } else if (matcher == 2000) { self.decades2000(true); }
+        }
+    };
+    //subscribe update to changes in KO Obs Array Decades
+    self.decades.subscribe(self.updateStyleDecade);
+
+    //Update selected Architect KO observables as styling trigger
+    this.updateStyleArchitect = function() {
+        self.wright(false);
+        self.schindler(false);
+        self.neutra(false);
+        self.lautner(false);
+        self.gehry(false);
+        for (var i = 0, len = self.architect().length; i < len; i++) {
+            //sets value to decade to be checked
+            var matcher = self.architect()[i];
+            //loop to eval which architects are present, & set values in KO obs that trigger CSS for selected archs
+            if (matcher === "Frank Lloyd Wright") { self.wright(true); } else if (matcher === "Schindler") { self.schindler(true); } else if (matcher === "Neutra") { self.neutra(true); } else if (matcher === "Lautner") { self.lautner(true); } else if (matcher === "Gehry") { self.gehry(true); }
+        }
+    };
+    //subscribe udpate to changes in KO Obs Array Architect
+    self.architect.subscribe(self.updateStyleArchitect);
+
+    //Update selected Access KO observables as styling trigger
+    this.updateStyleAccess = function() {
+        self.public(false);
+        self.tours(false);
+        self.exterior(false);
+        self.private(false);
+
+        for (var i = 0, len = self.access().length; i < len; i++) {
+            var matcher = self.access()[i];
+            //for css button styling, set individual KO obs booleans to true if selected
+            if (matcher === "o") { self.public(true); } else if (matcher === "t") { self.tours(true); } else if (matcher === "e") { self.exterior(true); } else if (matcher === "p") { self.private(true); }
+        }
+    };
+    //subscribe update to changes in KO Obs Array Access
+    self.access.subscribe(self.updateStyleAccess);
+
+    //subscribe evaluateExhibit to changes in any/all filter/search KO Obs / Arrays
     self.decades.subscribe(self.evaluateExhibit);
+    self.caseStudy.subscribe(self.evaluateExhibit);
     self.architect.subscribe(self.evaluateExhibit);
     self.access.subscribe(self.evaluateExhibit);
     self.search.subscribe(self.evaluateExhibit);
+
+
+
+    //self.decades.subscribe(self.checkboxDecadesUpdate);
 
     //load "masterList" TODO api load
     self.sortPlaces(masterList);
@@ -565,3 +746,30 @@ ko.applyBindings(new ViewModel());
     };
 };
 */
+
+/*var addressStringAddressCensus = address1+','+city+',CA';
+
+$.getJSON("http://geocoding.geo.census.gov/geocoder/locations/onelineaddress",
+    {"address":addressStringAddressCensus,
+    "benchmark":9,
+    "format":"jsonp"
+}, function(data)
+{
+    var LatLng = {lat: data["result"]["addressMatches"]["coordinates"]["x"],lng: data["result"]["addressMatches"]["coordinates"]["y"]};
+    self.placeList()[counter].marker.setPosition(LatLng);
+        var item = self.placeList()[counter];
+        item.marker.setMap(self.map);
+
+        item.marker.addListener('click', function() {
+
+            self.infoWindowOpener(item);
+        });
+});
+ if (self.placeList()[counter].exhibit() === true) {
+
+        //advance counter so next placeList item gets fed to markerSpinner
+        counter++;
+        //submits next request
+        self.markerSpinner(counter, len);
+
+    }*/

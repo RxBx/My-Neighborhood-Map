@@ -15,68 +15,82 @@
 
 <body>
     <div id="container" class="container">
-        <div id="searchFilterRevealHide" class="searchFilterRevealHide" data-bind="click: toggleSelections">Search/Filters
+        <div id="searchFilterRevealHide" class="searchFilterRevealHide" data-bind="click: toggleSelections">
+            <p id="searchFilterRevealHideText" class="searchFilterRevealHide_text">Search/Filters</p>
         </div>
         <div id="selections" class="selections">
-            <div id="searchDiv">
+            <div id="searchDiv" class="selections__searchDiv">
                 <p>Search?
-                    <input type="text" id="search" data-bind="textInput: search" />
+                    <input type="text" id="search" class="selections__searchDiv_searchBox" data-bind="textInput: search" />
                 </p>
-                <div id="showAllButton" data-bind="click: showAll">Show All</div>
-                <div id="clearMap" data-bind="click: clearMap">Clear Map</div>
+                <div id="showAllButton" class="selections__searchDiv_btn selections__searchDiv_showAll" data-bind="click: showAll">Show All</div>
+                <div id="clearMap" class="selections__searchDiv_btn selections__searchDiv_clear" data-bind="click: clearMap">Clear Map</div>
             </div>
-            <div id="decadeDiv">
+            <div id="decadeDiv" class="selections__decadeDiv">
                 <p>Decade?
-                    <input type="checkbox" name="decade" value="1920" data-bind="checked: decades" />1920s
-                    <input type="checkbox" name="decade" value="1930" data-bind="checked: decades" />1930s
-                    <input type="checkbox" name="decade" value="1940" data-bind="checked: decades" />1940s
-                    <input type="checkbox" name="decade" value="1950" data-bind="checked: decades" />1950s
-                    <input type="checkbox" name="decade" value="1960" data-bind="checked: decades" />1960s
-                    <input type="checkbox" name="decade" value="1970" data-bind="checked: decades" />1970s
-                    <input type="checkbox" name="decade" value="1980" data-bind="checked: decades" />1980s
-                    <input type="checkbox" name="decade" value="1990" data-bind="checked: decades" />1990s
-                    <input type="checkbox" name="decade" value="2000" data-bind="checked: decades" />2000s
+                    <div id="decadeInputContainer" class="selections__decadeDiv_decadeInputContainer">
+                        <span data-bind="css: { select: decades1920() === true }"><label class="checkBoxSymbol" for="i1920s" >1920s<input id="i1920s" type="checkbox" name="decade" value="1920" data-bind="checked: decades" /></label></span>
+                        <span data-bind="css: { select: decades1930() === true }"><label>1930s<input type="checkbox" name="decade" value="1930" data-bind="checked: decades" /></label></span>
+                        <span data-bind="css: { select: decades1940() === true }"><label>1940s<input type="checkbox" name="decade" value="1940" data-bind="checked: decades" /></label></span>
+                        <span data-bind="css: { select: decades1950() === true }"><label>1950s<input type="checkbox" name="decade" value="1950" data-bind="checked: decades" /></label></span>
+                        <span data-bind="css: { select: decades1960() === true }"><label>1960s<input type="checkbox" name="decade" value="1960" data-bind="checked: decades" /></label></span>
+                        <span data-bind="css: { select: decades1970() === true }"><label>1970s<input type="checkbox" name="decade" value="1970" data-bind="checked: decades" /></label></span>
+                        <span data-bind="css: { select: decades1980() === true }"><label>1980s<input type="checkbox" name="decade" value="1980" data-bind="checked: decades" /></label></span>
+                        <span data-bind="css: { select: decades1990() === true }"><label>1990s<input type="checkbox" name="decade" value="1990" data-bind="checked: decades" /></label></span>
+                        <span data-bind="css: { select: decades2000() === true }"><label>2000s<input type="checkbox" name="decade" value="2000" data-bind="checked: decades" /></label></span>
+                    </div>
                 </p>
             </div>
-            <div id="architectDiv">
+            <div id="architectDiv" class="selections__architectDiv">
                 <p>Architect?
-                    <input type="checkbox" name="architect" value="Frank Lloyd Wright" data-bind="checked: architect" />Frank Lloyd Wright
-                    <input type="checkbox" name="architect" value="Schindler" data-bind="checked: architect" />Schindler
-                    <input type="checkbox" name="architect" value="Neutra" data-bind="checked: architect" />Neutra
-                    <input type="checkbox" name="architect" value="Lautner" data-bind="checked: architect" />Lautner
-                    <input type="checkbox" name="architect" value="Gehry" data-bind="checked: architect" />Gehry
-                    <input type="checkbox" name="architect" value="Case Study" data-bind="checked: architect" />Case Study
+                    <div id="architectInputContainer" class="selections__architectDiv_architectInputContainer">
+                        <span data-bind="css: { select: wright() === true }"><label>Frank Lloyd Wright<input type="checkbox" name="architect" value="Frank Lloyd Wright" data-bind="checked: architect" /></label></span>
+                        <span data-bind="css: { select: schindler() === true }"><label>Schindler<input type="checkbox" name="architect" value="Schindler" data-bind="checked: architect" /></label></span>
+                        <span data-bind="css: { select: neutra() === true }"><label>Neutra<input type="checkbox" name="architect" value="Neutra" data-bind="checked: architect" /></label></span>
+                        <span data-bind="css: { select: lautner() === true }"><label>Lautner<input type="checkbox" name="architect" value="Lautner" data-bind="checked: architect" /></label></span>
+                        <span data-bind="css: { select: gehry() === true }"><label>Gehry<input type="checkbox" name="architect" value="Gehry" data-bind="checked: architect" /></label></span>
+                        <span data-bind="css: { select: caseStudy() === true }"><label>Case Study<input type="checkbox" name="architect" value="true" data-bind="checked: caseStudy" /></label></span>
+                    </div>
                 </p>
             </div>
-            <div id="publicDiv">
+            <div id="publicDiv" class="selections__publicDiv">
                 <p>Access?
-                    <input type="checkbox" name="access" value="o" data-bind="checked: access" />Public
-                    <input type="checkbox" name="access" value="t" data-bind="checked: access" />Tours/Appointments
-                    <input type="checkbox" name="access" value="e" data-bind="checked: access" />Exterior View
-                    <input type="checkbox" name="access" value="p" data-bind="checked: access" />Private
+                    <div id="publicInputContainer" class="selections__publicDiv_publicDivInputContainer">
+                        <span data-bind="css: { select: public() === true }"><label>Public<input type="checkbox" name="access" value="o" data-bind="checked: access" /></label></span>
+                        <span data-bind="css: { select: tours() === true }"><label>Tours/Appointments<input type="checkbox" name="access" value="t" data-bind="checked: access" /></label></span>
+                        <span data-bind="css: { select: exterior() === true }"><label>Exterior View<input type="checkbox" name="access" value="e" data-bind="checked: access" /></label></span>
+                        <span data-bind="css: { select: private() === true }"><label>Private<input type="checkbox" name="access" value="p" data-bind="checked: access" /></label></span>
+                    </div>
                 </p>
             </div>
         </div>
         <div id="mainView" class="mainView">
             <div id="header" class="mainView__header">
-            <h2>Almost&nbsp;100&nbsp;Los&nbsp;Angeles Architectural&nbsp;Landmarks</h2>
+                <h2>Almost&nbsp;100&nbsp;Los&nbsp;Angeles Architectural&nbsp;Landmarks</h2>
             </div>
-
             <!-- MAP  -->
             <div id="mapHolder" class="mainView__mapHolder">
                 <div id="map" class="mainView__mapHolder__map"></div>
             </div>
             <!-- LOCATION LIST  -->
             <div id="overlay-list" class="mainView__overlay-list">
-                <ul data-bind="foreach: placeList">
-                    <li data-bind="visible: $data.exhibit, text: name, click: $parent.infoWindowOpener"></li>
-                </ul>
+                <div class="mainView__overlay-list_listContents_header">
+                    <h2>Place List <span data-bind="visible: listScroll">(scrollable)</span></h2>
+                </div>
+                <div id="overlay-list_listContents" class="mainView__overlay-list_listContents">
+                    <ul id="mainView__overlay-list_listContents_ul" data-bind="foreach: placeList">
+                        <li data-bind="visible: $data.exhibit, text: name, click: $parent.infoWindowOpener"></li>
+                    </ul>
+                     <div id="mainView__overlay-list_noResults" class="mainView__overlay-list_noResults" data-bind="visible: noResults">
+                    <p>No results! Try re-setting "Search/Filters"</p>
+                </div>
+                </div>
+
             </div>
         </div>
-    </div>
-    <script src="master-list.js" type="text/javascript"></script>
-    <script src="js/script.js" type="text/javascript">
-    </script>
+        <script src="master-list-short.js" type="text/javascript"></script>
+        <script src="js/script.js" type="text/javascript">
+        </script>
 </body>
 
 </html>
