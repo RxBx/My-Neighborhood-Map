@@ -84,7 +84,7 @@ var masterList = [{
 	"address1": "1845 Niodrara Dr.",
 	"city": "Glendale",
 	"access": "p",
-	"architect": "R. M. Schindler",
+	"architect": "Rudolf Schindler",
 	"Case Study": false,
 	"year": 1942
 }, {
@@ -92,7 +92,7 @@ var masterList = [{
 	"address1": "2422 Silver Ridge Ave.",
 	"city": "Los Angeles",
 	"access": "p",
-	"architect": "R. M. Schindler",
+	"architect": "Rudolf Schindler",
 	"Case Study": false,
 	"year": 1925
 }, {
@@ -100,7 +100,7 @@ var masterList = [{
 	"address1": "2236 Micheltorena Street,",
 	"city": "Los Angeles",
 	"access": "p",
-	"architect": "R. M. Schindler",
+	"architect": "Rudolf Schindler",
 	"Case Study": false,
 	"year": 1934
 }, {
@@ -108,7 +108,7 @@ var masterList = [{
 	"address1": "2090 Redcliff Street",
 	"city": "Los Angeles",
 	"access": "p",
-	"architect": "R. M. Schindler",
+	"architect": "Rudolf Schindler",
 	"Case Study": false,
 	"year": 1939
 }, {
@@ -116,7 +116,7 @@ var masterList = [{
 	"address1": "835 North Kings Road",
 	"city": "West Hollywood",
 	"access": "p",
-	"architect": "R. M. Schindler",
+	"architect": "Rudolf Schindler",
 	"Case Study": false,
 	"year": 1922
 }, {
@@ -124,7 +124,7 @@ var masterList = [{
 	"address1": "11833 Laurelwood Dr.",
 	"city": "Los Angeles",
 	"access": "e",
-	"architect": "R. M. Schindler",
+	"architect": "Rudolf Schindler",
 	"Case Study": false,
 	"year": 1949
 }, {
@@ -132,7 +132,7 @@ var masterList = [{
 	"address1": "3580 Multiview Dr.",
 	"city": "Los Angeles",
 	"access": "p",
-	"architect": "R. M. Schindler",
+	"architect": "Rudolf Schindler",
 	"Case Study": false,
 	"year": 1946
 }, {
@@ -140,7 +140,7 @@ var masterList = [{
 	"address1": "8704 Skyline Dr",
 	"city": "Los Angeles",
 	"access": "p",
-	"architect": "R. M. Schindler",
+	"architect": "Rudolf Schindler",
 	"Case Study": false,
 	"year": 1949
 }, {
@@ -148,7 +148,7 @@ var masterList = [{
 	"address1": "175 Greenfield Ave.",
 	"city": "Los Angeles",
 	"access": "p",
-	"architect": "R. M. Schindler",
+	"architect": "Rudolf Schindler",
 	"Case Study": false,
 	"year": 1950
 }, {
@@ -156,7 +156,7 @@ var masterList = [{
 	"address1": "6260 Sunset Boulevard",
 	"city": "Los Angeles",
 	"access": "o",
-	"architect": "R. M. Schindler",
+	"architect": "Rudolf Schindler",
 	"Case Study": false,
 	"year": 1938
 
@@ -165,7 +165,7 @@ var masterList = [{
 	"address1": "19950 Collier Street",
 	"city": "Los Angeles",
 	"access": "p",
-	"architect": "R. M. Schindler",
+	"architect": "Rudolf Schindler",
 	"Case Study": false,
 	"year": 1940
 }, {
@@ -173,7 +173,7 @@ var masterList = [{
 	"address1": "4901 S. Compton Ave.",
 	"city": "Los Angeles",
 	"access": "p",
-	"architect": "R. M. Schindler",
+	"architect": "Rudolf Schindler",
 	"Case Study": false,
 	"year": 1944
 }, {
@@ -181,7 +181,7 @@ var masterList = [{
 	"address1": "12632 Ventura Blvd.",
 	"city": "Los Angeles",
 	"access": "o",
-	"architect": "R. M. Schindler",
+	"architect": "Rudolf Schindler",
 	"Case Study": false,
 	"year": 1942
 
@@ -190,7 +190,7 @@ var masterList = [{
 	"address1": "2036 Griffith Park Blvd.",
 	"city": "Los Angeles",
 	"access": "e",
-	"architect": "R. M. Schindler",
+	"architect": "Rudolf Schindler",
 	"Case Study": false,
 	"year": 1941
 }, {
@@ -200,7 +200,7 @@ var masterList = [{
 	"address1": "8078 Woodrow Wilson Dr.",
 	"city": "Los Angeles",
 	"access": "o",
-	"architect": "R. M. Schindler",
+	"architect": "Rudolf Schindler",
 	"Case Study": false,
 	"year": 1936
 }, {
@@ -210,7 +210,7 @@ var masterList = [{
 	"address1": "6853 Pacific View Dr",
 	"city": "Los Angeles",
 	"access": "p",
-	"architect": "R. M. Schindler",
+	"architect": "Rudolf Schindler",
 	"Case Study": false,
 	"year": 1950
 }, {
@@ -218,7 +218,7 @@ var masterList = [{
 	"address1": "4255 Agnes Avenue",
 	"city": "Los Angeles",
 	"access": "p",
-	"architect": "R. M. Schindler",
+	"architect": "Rudolf Schindler",
 	"Case Study": false,
 	"year": 1947
 }, {
@@ -226,7 +226,7 @@ var masterList = [{
 	"address1": "2025 Kenilworth Avenue",
 	"city": "Los Angeles",
 	"access": "p",
-	"architect": "R. M. Schindler",
+	"architect": "Rudolf Schindler",
 	"Case Study": false,
 	"year": 1940
 }, {
@@ -234,7 +234,7 @@ var masterList = [{
 	"address1": "1137 South Cochran Avenue",
 	"city": "Los Angeles",
 	"access": "e",
-	"architect": "R. M. Schindler",
+	"architect": "Rudolf Schindler",
 	"Case Study": false,
 	"year": 1939
 }, {
