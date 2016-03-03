@@ -540,7 +540,7 @@ var ViewModel = function() {
     this.toggleSelections = function() {
         //console.log($('#selections').position().top);
         //console.log("screen height: " + window.innerHeight);
-        if (self.isMobileLandscape()===false && $('#selections').position().top === window.innerHeight / 2) {
+        if (self.isMobileLandscape() === false && $('#selections').position().top === window.innerHeight / 2) {
             if (window.closeSelections) {
                 window.clearTimeout(window.closeSelections);
             }
@@ -570,7 +570,7 @@ var ViewModel = function() {
             });
                 $('#searchFilterRevealHideText').text('Search/Filters');
             }, 5000);*/
-        } else if (self.isMobileLandscape() === true && $('#selections').position().top < .11 * window.innerHeight){
+        } else if (self.isMobileLandscape() === true && $('#selections').position().top < .11 * window.innerHeight) {
             $('#searchFilterRevealHideText').text('Search/Filters');
             $('#selections').animate({
                 top: '92.5%'
@@ -727,5 +727,36 @@ var ViewModel = function() {
         }*/
 };
 
-ko.applyBindings(new ViewModel());
+var startApp = function() {
+    ko.applyBindings(new ViewModel());
+};
 
+var errorCall = function() {
+    console.log("errorCall invoked");
+
+    var newBody = document.createElement('body');
+    var elem = document.createElement('p');
+    //var newContent = document.createTextNode("Hi there and greetings!");
+    if (!document.body) {
+        var dom = document.implementation.createDocument('http://www.w3.org/1999/xhtml', 'html', null);
+        var body = dom.createElement("body");
+
+        dom.documentElement.appendChild(body);
+        // set timeout is needed because document.body is created after the current continuation finishes
+        setTimeout(function() {
+            //document.body.innerHTML = "Hi"
+            document.body.appendChild(elem);
+            $('p').attr('id', 'error');
+            $('#error').text("Error: Google Map API failed to load").removeClass('noerror').addClass('error');
+        }, 0);
+        console.log("made the body");
+    } else {
+         $('#error').text("Error: Google Map API failed to load").removeClass('noerror').addClass('error');
+
+    }
+    //document.body.appendChild(elem);
+
+
+
+
+};
