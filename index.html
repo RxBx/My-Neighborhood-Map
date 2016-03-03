@@ -22,12 +22,12 @@
             <div id="searchDiv" class="selections__searchDiv">
                 <p>Search?
                     <input type="text" id="search" class="selections__searchDiv_searchBox" data-bind="textInput: search" />
-                </p>
+                    </p>
                 <div id="showAllButton" class="selections__searchDiv_btn selections__searchDiv_showAll" data-bind="click: showAll">Show All</div>
                 <div id="clearMap" class="selections__searchDiv_btn selections__searchDiv_clear" data-bind="click: clearMap">Clear Map</div>
             </div>
             <div id="decadeDiv" class="selections__decadeDiv">
-                <p>Decade?
+                <p>Decade?</p>
                     <div id="decadeInputContainer" class="selections__decadeDiv_decadeInputContainer">
                         <span data-bind="css: { select: decades1920() === true }"><label class="checkBoxSymbol" for="i1920s" >1920s<input id="i1920s" type="checkbox" name="decade" value="1920" data-bind="checked: decades" /></label></span>
                         <span data-bind="css: { select: decades1930() === true }"><label>1930s<input type="checkbox" name="decade" value="1930" data-bind="checked: decades" /></label></span>
@@ -39,10 +39,10 @@
                         <span data-bind="css: { select: decades1990() === true }"><label>1990s<input type="checkbox" name="decade" value="1990" data-bind="checked: decades" /></label></span>
                         <span data-bind="css: { select: decades2000() === true }"><label>2000s<input type="checkbox" name="decade" value="2000" data-bind="checked: decades" /></label></span>
                     </div>
-                </p>
+
             </div>
             <div id="architectDiv" class="selections__architectDiv">
-                <p>Architect?
+                <p>Architect?</p>
                     <div id="architectInputContainer" class="selections__architectDiv_architectInputContainer">
                         <span data-bind="css: { select: wright() === true }"><label>Frank Lloyd Wright<input type="checkbox" name="architect" value="Frank Lloyd Wright" data-bind="checked: architect" /></label></span>
                         <span data-bind="css: { select: schindler() === true }"><label>Schindler<input type="checkbox" name="architect" value="Schindler" data-bind="checked: architect" /></label></span>
@@ -51,7 +51,7 @@
                         <span data-bind="css: { select: gehry() === true }"><label>Gehry<input type="checkbox" name="architect" value="Gehry" data-bind="checked: architect" /></label></span>
                         <span data-bind="css: { select: caseStudy() === true }"><label>Case Study<input type="checkbox" name="architect" value="true" data-bind="checked: caseStudy" /></label></span>
                     </div>
-                </p>
+
             </div>
             <div id="publicDiv" class="selections__publicDiv">
                 <p>Access?
