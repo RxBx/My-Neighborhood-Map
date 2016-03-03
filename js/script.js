@@ -529,10 +529,18 @@ var ViewModel = function() {
         self.setMarkers();
     };
 
+    this.isMobileLandscape = function() {
+        if (window.innerWidth < 651 && window.innerHeight < window.innerWidth) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     this.toggleSelections = function() {
         //console.log($('#selections').position().top);
         //console.log("screen height: " + window.innerHeight);
-        if ($('#selections').position().top === window.innerHeight / 2) {
+        if (self.isMobileLandscape()===false && $('#selections').position().top === window.innerHeight / 2) {
             if (window.closeSelections) {
                 window.clearTimeout(window.closeSelections);
             }
@@ -540,15 +548,15 @@ var ViewModel = function() {
                 top: '100%'
             }, 250);
             $('#searchFilterRevealHide').css({
-                'background-color': '#ff0'
+                'background-color': '#e6e87e'
             });
             $('#searchFilterRevealHideText').text('Search/Filters');
-        } else {
+        } else if (self.isMobileLandscape() === false) {
             $('#selections').animate({
                 top: '50%'
             }, 250);
             $('#searchFilterRevealHide').css({
-                'background-color': '#39e2cb'
+                'background-color': '#8cdcda'
             });
 
             $('#searchFilterRevealHideText').text('See List');
@@ -562,6 +570,27 @@ var ViewModel = function() {
             });
                 $('#searchFilterRevealHideText').text('Search/Filters');
             }, 5000);*/
+        } else if (self.isMobileLandscape() === true && $('#selections').position().top < .11 * window.innerHeight){
+            $('#searchFilterRevealHideText').text('Search/Filters');
+            $('#selections').animate({
+                top: '92.5%'
+            }, 250);
+            $('#searchFilterRevealHide').css({
+                'background-color': '#e6e87e'
+            });
+
+            //$('#searchFilterRevealHideText').text('See List');
+        } else if (self.isMobileLandscape() === true && $('#selections').position().top > .11 * window.innerHeight) {
+            if (window.closeSelections) {
+                window.clearTimeout(window.closeSelections);
+            }
+            $('#searchFilterRevealHideText').text('See List');
+            $('#selections').animate({
+                top: '10%'
+            }, 250);
+            $('#searchFilterRevealHide').css({
+                'background-color': '#8cdcda'
+            });
         }
     };
 
@@ -627,7 +656,55 @@ var ViewModel = function() {
     self.access.subscribe(self.evaluateExhibit);
     self.search.subscribe(self.evaluateExhibit);
 
+    window.addEventListener("orientationchange", function() {
+        console.log("fire orientation change");
+        if (self.isMobileLandscape() === true) {
+            $('#searchFilterRevealHideText').text('Search/Filters');
+            $('#selections').css({
+                top: '100%'
+            });
+            $('#searchFilterRevealHide').css({
+                'background-color': '#e6e87e'
+            });
+        } else if (window.innerWidth < 651) {
+            $('#searchFilterRevealHideText').text('See List');
+            $('#selections').css({
+                top: '50%'
+            });
+            $('#searchFilterRevealHide').css({
+                'background-color': '#8cdcda'
+            });
+        }
+        self.map.fitBounds(self.markerBounds);
+        if (self.map.getZoom() > 11) {
+            self.map.setZoom(11);
+        }
+    });
 
+    window.addEventListener("resize", function() {
+        console.log("fire resize change");
+        if (self.isMobileLandscape() === true) {
+            $('#searchFilterRevealHideText').text('Search/Filters');
+            $('#selections').css({
+                top: '100%'
+            });
+            $('#searchFilterRevealHide').css({
+                'background-color': '#e6e87e'
+            });
+        } else if (window.innerWidth < 651) {
+            $('#searchFilterRevealHideText').text('See List');
+            $('#selections').css({
+                top: '50%'
+            });
+            $('#searchFilterRevealHide').css({
+                'background-color': '#8cdcda'
+            });
+        }
+        self.map.fitBounds(self.markerBounds);
+        if (self.map.getZoom() > 11) {
+            self.map.setZoom(11);
+        }
+    });
 
     //self.decades.subscribe(self.checkboxDecadesUpdate);
 
@@ -635,141 +712,20 @@ var ViewModel = function() {
     self.sortPlaces(masterList);
 
     //change ko "access" to load all "non private" "o", "t", "e" at load.
-
     self.access(["o", "t", "e"]);
+
+    /*if (self.isMobileLandscape()===true) {
+            if (window.closeSelections) {
+                window.clearTimeout(window.closeSelections);
+            }
+            $('#selections').css({
+                top: '92.5%'
+            });
+            $('#searchFilterRevealHide').css({
+                'background-color': '#ff0'
+            });
+        }*/
 };
 
 ko.applyBindings(new ViewModel());
 
-
-/*var Marker = function(map, lastName, lat, lon, street) {
-
-    this.lastName = ko.observable(lastName);
-    this.lat = ko.observable(lat);
-    this.lon = ko.observable(lon);
-    this.street = ko.observable(street);
-
-    this.marker = new google.maps.Marker({
-        position: new google.maps.LatLng(lat, lon),
-        map: map,
-        title: this.lastName()
-            //animation: google.maps.Animation.DROP // doesn't work
-
-    });
-
-    var infoWindow = new google.maps.InfoWindow({
-        content: this.street() + " pop up!" // will show when used in combo w click event listener
-    });
-    //console.log(infoWindow.content); // perf check
-    //this.infoWindow = infoWindow;
-
-    this.popupevent = function() {
-        //console.log("The context inside the popupevent method appears to be selected StarItem array item:")
-        //console.log(this);
-        infoWindow.open(map, this.marker.marker); //thus, marker selection requires this.marker.marker
-    };
-    //Google Map click event on marker reveals infoWindo
-    this.marker.addListener('click', function() {
-        //console.log("This context inside the marker click event appears to be the marker itself:")
-        //console.log(this);
-        infoWindow.open(map, this); // thus marker selection simply requires "this"
-    });
-
-    this.changePopupContent = function() {
-        //infoWindow.content = "Changed";
-    };
-
-    //console.log("marker made"); //perf check
-    //this.isVisible = ko.observable(false);
-
-    //this.isVisible.subscribe(function(currentState) {
-    //if (currentState) {
-    //marker.setMap(map);
-    //} else {
-    //marker.setMap(null);
-    //}
-    //});
-
-    //this.isVisible(true);
-
-
-};
-
-ko.applyBindings(new ViewModel());
-
-//DEAD CODE FROM FIRST SPAGHETTI INCARNATION
-
-//Basic Google Map creation baed on lat & lng
-
-
-//creates marker on map based on geocode lookup of address
-/*var makeMarker = function(markerObject, index) {
-    console.log("makeMarker"); // perf check
-    console.log(markerObject); // perf check
-    console.log(markerObject.street); // perf check
-    street = markerObject.street;
-    var addressArray = street.split(" "); //geting rid of white spaces
-    var streetAddressQueriable = addressArray[0]; //begin piece of API URL
-    for (var i = 1; i < addressArray.length; i++) {
-        streetAddressQueriable += "+" + addressArray[i]; //reconsituting for API URL
-    }
-    var addressStringAddress = streetAddressQueriable + ",+" + modelLocale.city + ",+" + modelLocale.state;
-    var geocodeDataAddress = {
-        address: addressStringAddress,
-        key: apiKeyGeocode
-    };
-    $.getJSON(geocodeURL, geocodeDataAddress, function(data) {
-        console.log("makeMarker getJSON worked"); //perf check
-        updateLatLng(data);
-        var currentMarker = setMarker(); //put the marker on the map using geocode lat lng
-        console.log("return on currentMarker:");
-        console.log(currentMarker);
-        //sidebar(markerObject, index, currentMarker) // creates sidebar list item, and places click event listener
-
-    });
-    //alert("makeMarker complete");
-};
-*/
-
-
-
-//Gen use function for parsing lat & long data from geocode look up
-/*var updateLatLng = function(data) {
-    lat = Number(data.results[0].geometry.location.lat);
-    lng = Number(data.results[0].geometry.location.lng);
-    console.log("updateLatLng " + lat); //perf check
-    console.log(lng); //perf check
-    //update the position data object
-    myLatLng = {
-        lat: lat,
-        lng: lng
-    };
-};
-*/
-
-/*var addressStringAddressCensus = address1+','+city+',CA';
-
-$.getJSON("http://geocoding.geo.census.gov/geocoder/locations/onelineaddress",
-    {"address":addressStringAddressCensus,
-    "benchmark":9,
-    "format":"jsonp"
-}, function(data)
-{
-    var LatLng = {lat: data["result"]["addressMatches"]["coordinates"]["x"],lng: data["result"]["addressMatches"]["coordinates"]["y"]};
-    self.placeList()[counter].marker.setPosition(LatLng);
-        var item = self.placeList()[counter];
-        item.marker.setMap(self.map);
-
-        item.marker.addListener('click', function() {
-
-            self.infoWindowOpener(item);
-        });
-});
- if (self.placeList()[counter].exhibit() === true) {
-
-        //advance counter so next placeList item gets fed to markerSpinner
-        counter++;
-        //submits next request
-        self.markerSpinner(counter, len);
-
-    }*/

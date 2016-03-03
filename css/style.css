@@ -270,7 +270,7 @@
           top: 92.5%;
           right: 0%;
           z-index: 2;
-          background-color: #8cdcda;
+          background-color: #e6e87e;
       }
       .searchFilterRevealHide p,
       .selections__searchDiv_btn {
@@ -296,7 +296,7 @@
           height: 82.5%;
           width: 50%;
           position: fixed;
-          top: 10%;
+          top: 92.5%;
           right: 0%;
       }
       .selections__searchDiv {
@@ -370,7 +370,7 @@
   }
   }
 
-  @media only screen and (min-width: 651px) and (min-aspect-ratio: 1/1) {
+  @media only screen and (min-width: 651px) {
       .searchFilterRevealHide {
           display: none;
       }
