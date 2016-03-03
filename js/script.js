@@ -1,11 +1,5 @@
 "use strict";
 
-//GOOGLE Geocode API URL
-var geocodeURL = "https://maps.googleapis.com/maps/api/geocode/json"; //to access geocode API
-
-// Google Geocode API key - different from Map key (Currently NOT used)
-var apiKeyGeocode = "AIzaSyBkBk3maFmugZtnSWKTkFMK2CXIe0c_20k";
-
 //KNOCKOUT VIEWMODEL
 var ViewModel = function() {
     var self = this; //used to lock context for incrementCounter method defined below
@@ -34,7 +28,6 @@ var ViewModel = function() {
                 searchString = searchString + "caseStudy";
             }
             searchString = searchString.toLowerCase();
-            //console.log(searchString);
             return searchString;
         })();
     };
@@ -80,7 +73,6 @@ var ViewModel = function() {
         var hiddenListLength = $('#mainView__overlay-list_listContents_ul li:hidden').length;
 
         if (hiddenListLength === totalListLength) {
-            console.log
             self.noResults(true);
         } else { self.noResults(false); }
     };
@@ -272,7 +264,6 @@ var ViewModel = function() {
         if (self.map.getZoom() > 11) {
             self.map.setZoom(11);
         }
-        console.log(self.map.getZoom());
     };
 
 
@@ -316,18 +307,23 @@ var ViewModel = function() {
         //self.placeList().forEach(function(placeObject, index) {
         //  self.makeMarker(placeObject, index);
         //};
-        console.log("running setMarkers");
         //sets looping values external/prior to "markerSpinner" for special purpose looping in "markerSpinner"
         self.placeList().forEach(self.markerSpinner);
     };
 
     this.geocode = function(item) {
+
+        //GOOGLE Geocode API URL
+        var geocodeURL = "https://maps.googleapis.com/maps/api/geocode/json"; //to access geocode API
+
+        // Google Geocode API key - different from Map key
+        var apiKeyGeocode = "AIzaSyBkBk3maFmugZtnSWKTkFMK2CXIe0c_20k";
+
         var address1 = item.address1;
-        //console.log("geocoding counter " + counter);
         var city = item.city;
         var addressArray = address1.split(" "); //geting rid of white spaces
         var streetAddressQueriable = addressArray[0]; //begin piece of API URL
-        for (var i = 1; i < addressArray.length; i++) {
+        for (var i = 1, len = addressArray.length; i < len; i++) {
             streetAddressQueriable += "+" + addressArray[i]; //reconsituting for API URL
         }
 
@@ -337,32 +333,38 @@ var ViewModel = function() {
             key: apiKeyGeocode
         };
 
+        var geocodeFailTimeout = setTimeout(function() {
+            $('#error').text("Error: Google Map Geocoder is failing to connect")
+                .removeClass('noerror').addClass('error');
+        }, 3000);
+
 
         $.getJSON(geocodeURL, geocodeDataAddress, function(data) {
-            console.log("geocode status: " + data.status);
             var LatLng;
             if (data.status === "OK") {
+                clearTimeout(geocodeFailTimeout);
                 LatLng = data.results[0].geometry.location;
-                //var currentMarker = setMarker(); //put the marker on the map using geocode lat lng
 
                 item.marker.setPosition(LatLng);
-                //var item = item;
-
 
                 item.marker.addListener('click', function() {
-
                     self.infoWindowOpener(item);
                 });
             } else if (data.status === "OVER_QUERY_LIMIT") {
+                clearTimeout(geocodeFailTimeout);
                 //if Geocoder hits limit, re-submit SAME counter number, to re-run the Geocode request
                 self.geocode(item);
             } else {
+                clearTimeout(geocodeFailTimeout);
                 //Other Geocode errors prompts message
-                console.log("geocode error status: " + data.status);
+                var requestGeocodeTimeout = setTimeout(function() {
+                    $('#error').removeClass('error').addClass('noerror');
+                }, 8000);
+                $('#error').text("Error: Google Map Geocoder failed on at least one address lookup. Message: " + data.status)
+                    .removeClass('noerror').addClass('error');
             }
 
             if ((item.exhibit() === true) && (item.marker.getPosition() !== null)) {
-                console.log('used it');
                 item.marker.setMap(self.map);
                 self.markerBounds.extend(item.marker.getPosition());
                 self.map.fitBounds(self.markerBounds);
@@ -370,11 +372,7 @@ var ViewModel = function() {
                 if (self.map.getZoom() > 11) {
                     self.map.setZoom(11);
                 }
-                console.log(self.map.getZoom());
-            } else {
-                console.log("didn't use it");
             }
-
         });
     };
     //This function on first run, geocodes all markers;
@@ -387,63 +385,11 @@ var ViewModel = function() {
             //TODO: Unmask geocode below, so the markers begin appearing after Google releases
             self.geocode(item);
 
-            /*var address1 = self.placeList()[counter].address1;
-                console.log("geocoding counter " + counter);
-                var city = self.placeList()[counter].city;
-                var addressArray = address1.split(" "); //geting rid of white spaces
-                var streetAddressQueriable = addressArray[0]; //begin piece of API URL
-                for (var i = 1; i < addressArray.length; i++) {
-                    streetAddressQueriable += "+" + addressArray[i]; //reconsituting for API URL
-                }
-
-
-                var addressStringAddress = streetAddressQueriable + ",+" + city + ",+CA";
-                var geocodeDataAddress = {
-                    address: addressStringAddress,
-                    key: apiKeyGeocode
-                };
-
-
-                $.getJSON(geocodeURL, geocodeDataAddress, function(data) {
-                    if (data.status === "OK") {
-                        var LatLng = data.results[0].geometry.location;
-                        //var currentMarker = setMarker(); //put the marker on the map using geocode lat lng
-
-                        self.placeList()[counter].marker.setPosition(LatLng);
-                        var item = self.placeList()[counter];
-                        item.marker.setMap(self.map);
-
-                        item.marker.addListener('click', function() {
-
-                            self.infoWindowOpener(item);
-                        });
-                    }
-                    if (self.placeList()[counter].exhibit() === true) {
-
-                        //advance counter so next placeList item gets fed to markerSpinner
-                        counter++;
-                        //submits next request
-                        self.markerSpinner(counter, len);
-                    } else if (data.status === "OVER_QUERY_LIMIT") {
-                        //if Geocoder hits limit, re-submit SAME counter number, to re-run the Geocode request
-                        self.markerSpinner(counter, len);
-                    } else {
-                        //Other Geocode errors prompts message
-                        console.log("geocode error status: " + data.status);
-                        //advance counter so next placeList item gets fed to markerSpinner
-                        counter++;
-                        //submits next request
-                        self.markerSpinner(counter, len);
-                    }
-
-                });
-    */
         } else if (item.exhibit() === true) {
             self.markerBounds.extend(item.marker.getPosition());
             item.marker.setMap(self.map);
             self.map.fitBounds(self.markerBounds);
             self.map.panToBounds(self.markerBounds);
-
 
         } else {
             item.marker.setMap(null);
@@ -454,9 +400,10 @@ var ViewModel = function() {
 
     this.infoWindowOpener = function(item) {
         self.infowindow.close();
-        console.log("infoWindowOpener run");
+
         var accessLetter = item.access;
-        var accessString = function(accessLetter) {
+
+        var accessStringEval = function(accessLetter) {
             if (accessLetter === "e") {
                 return "Exterior View";
             } else if (accessLetter === "o") {
@@ -467,51 +414,68 @@ var ViewModel = function() {
                 return "Private Residence - No Access";
             }
         };
-        var windowContent = '<p>' + item.name + '</p>' + '<p>' + item.address1 + ', ' + item.city + '</p>' + '<p>Year Built: ' + item.year + '</p>' + '<p>Architect(s): ' + item.architect + '</p>' +
-            '<p>' + accessString(accessLetter) + '</p>';
-        self.infowindow.setContent(windowContent);
 
-        self.infowindow.open(self.map, item.marker);
+        var accessString = accessStringEval(accessLetter);
+
+        var searchItemEval = function(item) {
+            if (item.caseStudy === true && item.architect !== "Richard Neutra") {
+                return "Case Study Houses";
+            } else {
+                return item.architect;
+            }
+        };
+
+        var searchItem = searchItemEval(item);
+
+        var wikiUrl = 'http://en.wikipedia.org/w/api.php';
+
+        var requestWikiTimeout = setTimeout(function() {
+            var windowContent = '<p>' + item.name + '</p>' + '<p>' + item.address1 + ', ' + item.city + '</p>' + '<p>Year Built: ' + item.year + '</p>' + '<p>Architect(s): ' + item.architect + '</p>' +
+                '<p>' + accessString + '</p>' + '(Wikipedia is not responding)';
+            self.infowindow.setContent(windowContent);
+            self.infowindow.open(self.map, item.marker);
+        }, 3000);
+
+        $.ajax({
+            url: wikiUrl,
+            data: {
+                action: "opensearch",
+                search: searchItem,
+                namespace: 0
+            },
+            dataType: "jsonp"
+        }).done(function(response) {
+            clearTimeout(requestWikiTimeout);
+            var wikiItems = response;
+            var wikiLine = '<p><a href="' + wikiItems[3][0] + '" target="_blank">' + 'Wikipedia link' + '</a></p>';
+
+            var windowContent = '<p>' + item.name + '</p>' + '<p>' + item.address1 + ', ' + item.city + '</p>' + '<p>Year Built: ' + item.year + '</p>' + '<p>Architect(s): ' + item.architect + '</p>' +
+                '<p>' + accessString + '</p>' + wikiLine;
+
+            self.infowindow.setContent(windowContent);
+            self.infowindow.open(self.map, item.marker);
+
+
+        }).fail(function(response) {
+
+            clearTimeout(requestWikiTimeout);
+            var windowContent = '<p>' + item.name + '</p>' + '<p>' + item.address1 + ', ' + item.city + '</p>' + '<p>Year Built: ' + item.year + '</p>' + '<p>Architect(s): ' + item.architect + '</p>' +
+                '<p>' + accessString + '</p>';
+            self.infowindow.setContent(windowContent);
+            self.infowindow.open(self.map, item.marker);
+        });
 
     };
 
-
-    /*this.makeMarker = function(markerObject, index) {
-
-        var address1 = markerObject.address1;
-        var city = markerObject.city;
-        var addressArray = address1.split(" "); //geting rid of white spaces
-        var streetAddressQueriable = addressArray[0]; //begin piece of API URL
-        for (var i = 1; i < addressArray.length; i++) {
-            streetAddressQueriable += "+" + addressArray[i]; //reconsituting for API URL
-        }
-        var addressStringAddress = streetAddressQueriable + ",+" + city + ",+CA";
-        var geocodeDataAddress = {
-            address: addressStringAddress,
-            key: apiKeyGeocode
-        };
-        $.getJSON(geocodeURL, geocodeDataAddress, function(data) {
-
-            self.updateLatLng(data);
-            var currentMarker = setMarker(); //put the marker on the map using geocode lat lng
-
-
-        });
-    };*/
-
     this.showAll = function() {
-        console.log("clicked show all");
         self.decades([]);
         self.architect([]);
         self.caseStudy(false);
         self.access([]);
         self.search("");
-
-
     };
 
     this.clearMap = function() {
-        console.log("clicked clearMap");
         if (window.closeSelections) {
             window.clearTimeout(window.closeSelections);
         }
@@ -538,8 +502,6 @@ var ViewModel = function() {
     }
 
     this.toggleSelections = function() {
-        //console.log($('#selections').position().top);
-        //console.log("screen height: " + window.innerHeight);
         if (self.isMobileLandscape() === false && $('#selections').position().top === window.innerHeight / 2) {
             if (window.closeSelections) {
                 window.clearTimeout(window.closeSelections);
@@ -657,7 +619,6 @@ var ViewModel = function() {
     self.search.subscribe(self.evaluateExhibit);
 
     window.addEventListener("orientationchange", function() {
-        console.log("fire orientation change");
         if (self.isMobileLandscape() === true) {
             $('#searchFilterRevealHideText').text('Search/Filters');
             $('#selections').css({
@@ -682,7 +643,6 @@ var ViewModel = function() {
     });
 
     window.addEventListener("resize", function() {
-        console.log("fire resize change");
         if (self.isMobileLandscape() === true) {
             $('#searchFilterRevealHideText').text('Search/Filters');
             $('#selections').css({
@@ -732,8 +692,6 @@ var startApp = function() {
 };
 
 var errorCall = function() {
-    console.log("errorCall invoked");
-
     var newBody = document.createElement('body');
     var elem = document.createElement('p');
     //var newContent = document.createTextNode("Hi there and greetings!");
@@ -749,9 +707,8 @@ var errorCall = function() {
             $('p').attr('id', 'error');
             $('#error').text("Error: Google Map API failed to load").removeClass('noerror').addClass('error');
         }, 0);
-        console.log("made the body");
     } else {
-         $('#error').text("Error: Google Map API failed to load").removeClass('noerror').addClass('error');
+        $('#error').text("Error: Google Map API failed to load").removeClass('noerror').addClass('error');
 
     }
     //document.body.appendChild(elem);
