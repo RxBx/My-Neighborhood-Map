@@ -14,7 +14,7 @@ http://rxbx.github.io/My-Neighborhood-Map/
 - You can examine the original files at the following link:
 https://github.com/RxBx/My-Neighborhood-Map
 
-You can launch the app locally from the file in the directory by opening "index.html" in a web browser.
+You can launch the app locally from the directory by opening the file "index.html" in a web browser.
 
 ##Code Notes
 
