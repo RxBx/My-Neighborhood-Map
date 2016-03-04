@@ -621,6 +621,10 @@ var ViewModel = function() {
 
     //change KO "access" to display all "non private" placeOjbects () "o", "t", "e" ) at first run.
     self.access(["o", "t", "e"]);
+
+    setTimeout(function() {
+            self.listScrollEval();
+        }, 100);
     /* TO DO - automate "selection" box open/close on timer from last user engage
         if (self.isMobileLandscape()===true) {
             if (window.closeSelections) {
