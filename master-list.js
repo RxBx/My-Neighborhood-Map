@@ -1,3 +1,5 @@
+/*Hardcoded database for app*/
+"use strict";
 var masterList = [{
 	"name": "Aline Barnsdale Hollyhock House",
 	"address1": "4800 Hollywood Blvd",
@@ -773,4 +775,4 @@ var masterList = [{
 	"architect": "Frank Gehry",
 	"Case Study": false,
 	"year": 2005
-}]
+}];

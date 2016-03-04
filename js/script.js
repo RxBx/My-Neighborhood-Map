@@ -417,7 +417,7 @@ var ViewModel = function() {
 
         //empties filters
         self.showAll();
-            //sets all items to exhibit:false
+        //sets all items to exhibit:false
         self.placeList().forEach(function(placeObject) {
             //reset "exhibit" in each places to "false" at head of evaluation loop;
             //This will be evaluated filter-by-filter;
@@ -579,7 +579,7 @@ var ViewModel = function() {
         }
     });
     //Event listener  on "resize" event to cue CSS changes if mobile screen orientation changes
-        window.addEventListener("resize", function() {
+    window.addEventListener("resize", function() {
         if (self.isMobileLandscape() === true) {
             $('#searchFilterRevealHideText').text('Search/Filters');
             $('#selections').css({
