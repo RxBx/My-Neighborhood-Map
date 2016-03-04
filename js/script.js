@@ -108,6 +108,12 @@ var ViewModel = function() {
     this.search = ko.observable("");
     /*Main engine to evaluate visibility of list items based on chosen filters and search*/
     this.evaluateExhibit = function() {
+        //stop bouncing marker
+        self.placeList().forEach(function(placeObject) {
+            if (placeObject.marker.getAnimation() !==null) {
+                    placeObject.marker.setAnimation(null);
+                }
+        });
         /* TO DO - automate "selection" box open/close on timer from last user engage
         if (window.closeSelections) {
             window.clearTimeout(window.closeSelections);
@@ -330,12 +336,19 @@ var ViewModel = function() {
         } else {
             item.marker.setMap(null);
         }
-
     };
     //Function to construct the info window, incl. AJAX req to Wikipedia for info link, with error handling
     this.infoWindowOpener = function(item) {
+        //stops bouncing markers
+        self.placeList().forEach(function(placeObject) {
+            if (placeObject.marker.getAnimation() !==null) {
+                    placeObject.marker.setAnimation(null);
+                }
+        });
         //close any open infowindow
         self.infowindow.close();
+        //bounces the selected marker
+        item.marker.setAnimation(google.maps.Animation.BOUNCE);
         //turn "letter" value for "access" into human readable message
         var accessLetter = item.access;
 
