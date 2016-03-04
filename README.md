@@ -2,17 +2,18 @@
 
 ##Introduction
 
-This app allows users to search and filter a list of nearly 100 architecturally significant places in Los Angeles, examine them on a map, and view specific information abou them in an "info window."
+This app allows users to search and filter a list of nearly 100 architecturally significant places in Los Angeles, examine them on a map, and view specific information about them in an "info window."
 
 It uses various Google Maps and Wikipedia API capabilities, as well as responsive design via CSS, and KnockoutJS to handle dynamic changes in the "View."
 
 ##Loading and Examining the project
 
 - You can view and analyze a live version of the project thru GitHub Pages:
-rxbx.github.io/My-Neighborhood-Map/
+http://rxbx.github.io/My-Neighborhood-Map/
 
 - You can examine the original files at the following link:
 https://github.com/RxBx/My-Neighborhood-Map
+
 Downloading these files will also let you perform the pages locally on your computer.
 
 ##Code Notes
