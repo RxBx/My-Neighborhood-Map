@@ -4,7 +4,7 @@ body {
     margin: 0;
     padding: 0;
     color: #4d4d4d;
-    font-family: arial, Sans-Serif;
+    font-family: arial, sans-serif;
 }
 
 p {
@@ -35,7 +35,7 @@ input[type="checkbox"] {
     padding: 10%;
 }
 
-.searchFilterRevealHide {
+.search-filter-reveal-hide {
     width: 30%;
     height: 5%;
     position: fixed;
@@ -45,8 +45,8 @@ input[type="checkbox"] {
     background-color: #8cdcda;
 }
 
-.searchFilterRevealHide p,
-.mainView__overlay-list_noResults p {
+.search-filter-reveal-hide p,
+.main-view__overlay-list_no-results p {
     font-family: arial;
     font-size: 2.75vh;
     display: block;
@@ -54,32 +54,32 @@ input[type="checkbox"] {
     margin: 1.1vh 0;
 }
 
-.mainView {
+.main-view {
     width: 100%;
     height: 100%;
     position: absolute;
 }
 
-.mainView__header {
+.main-view__header {
     height: 10%;
     width: 100%;
     float: left;
     background-color: #8cdcda;
 }
 
-.mainView__header h2,
-.mainView__overlay-list h2 {
+.main-view__header h2,
+.main-view__overlay-list h2 {
     font-size: 3.5vh;
     text-align: center;
     font-family: arial;
 }
 
-.mainView__header h2 {
+.main-view__header h2 {
     margin-top: .5vh;
     margin-bottom: .5vh;
 }
 
-.mainView__overlay-list h2 {
+.main-view__overlay-list h2 {
     font-size: 3.5vh;
     text-align: center;
     font-family: arial;
@@ -88,21 +88,21 @@ input[type="checkbox"] {
     margin-top: 0;
 }
 
-.mainView__overlay-list_listContents_header h2,
-.mainView__header h2 {
+.main-view__overlay-list_list-contents_header h2,
+.main-view__header h2 {
     color: #4d4d4d;
 }
 
-.mainView__overlay-list_listContents_header {
+.main-view__overlay-list_list-contents_header {
     height: 10%;
 }
 
-.mainView__overlay-list_listContents {
+.main-view__overlay-list_list-contents {
     height: 90%;
     overflow-y: scroll;
 }
 
-.mainView__overlay-list {
+.main-view__overlay-list {
     height: 50%;
     width: 100%;
     float: left;
@@ -110,23 +110,23 @@ input[type="checkbox"] {
     overflow-y: scroll;
 }
 
-.mainView__overlay-list li {
+.main-view__overlay-list li {
     font-family: arial;
     font-size: 3.5vh;
     color: #4d4d4d;
 }
 
-.mainView__overlay-list li:hover {
+.main-view__overlay-list li:hover {
     font-weight: 900;
 }
 
-.mainView__mapHolder {
+.main-view__map-holder {
     height: 40%;
     width: 100%;
     float: left;
 }
 
-.mainView__mapHolder__map {
+.main-view__map-holder__map {
     width: 100%;
     height: 100%;
 }
@@ -146,10 +146,10 @@ input[type="checkbox"] {
     padding-left: 2vh;
 }
 
-.selections__decadeDiv span,
-.selections__decadeDiv_decadeInputContainer span,
-.selections__architectDiv_architectInputContainer span,
-.selections__publicDiv_publicDivInputContainer span,
+.selections__decade-div span,
+.selections__decade-div_decade-input-container span,
+.selections__architect-div_architect-input-container span,
+.selections__public-div_public-div-input-container span,
 .selections p {
     font-family: arial;
     font-size: 2.85vh;
@@ -160,64 +160,64 @@ input[type="checkbox"] {
     color: #4d4d4d;
 }
 
-.selections__decadeDiv_decadeInputContainer,
-.selections__architectDiv_architectInputContainer,
-.selections__publicDiv_publicDivInputContainer {
+.selections__decade-div_decade-input-container,
+.selections__architect-div_architect-input-container,
+.selections__public-div_public-div-input-container {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
 }
 
-.selections__decadeDiv_decadeInputContainer span,
-.selections__architectDiv_architectInputContainer span,
-.selections__publicDiv_publicDivInputContainer span {
+.selections__decade-div_decade-input-container span,
+.selections__architect-div_architect-input-container span,
+.selections__public-div_public-div-input-container span {
     display: flex;
 }
 
-.selections__decadeDiv_decadeInputContainer span:hover,
-.selections__architectDiv_architectInputContainer span:hover,
-.selections__publicDiv_publicDivInputContainer span:hover {
+.selections__decade-div_decade-input-container span:hover,
+.selections__architect-div_architect-input-container span:hover,
+.selections__public-div_public-div-input-container span:hover {
     background-color: #b0afaf;
 }
 
-.selections__searchDiv,
-.selections__publicDiv,
-.selections__architectDiv {
+.selections__search-div,
+.selections__public-div,
+.selections__architect-div {
     border-color: #b7b900;
     box-sizing: border-box;
     border-style: solid;
 }
 
-.selections__decadeDiv,
-.selections__architectDiv {
+.selections__decade-div,
+.selections__architect-div {
     width: 50%;
     height: 60%;
     float: left;
 }
 
-.selections__searchDiv {
+.selections__search-div {
     border-width: 0 0 .5vh 0;
 }
 
-.selections__architectDiv {
+.selections__architect-div {
     border-width: 0 0 0 .5vw;
     box-sizing: border-box;
 }
 
-.selections__publicDiv {
+.selections__public-div {
     border-width: .5vh 0 0 0;
     float: left;
     width: 100%;
 }
 
-.selections__searchDiv_searchBox {
+.selections__search-div_search-box {
     width: 25vw;
     height: 2vh;
 }
 
-.selections__searchDiv_btn {
+.selections__search-div_btn {
     padding: 1vmin;
-    font-family: Helvetica, Arial, Sans-Serif;
+    font-family: arial, sans-serif;
     vertical-align: middle;
     box-sizing: border-box;
     height: 3vh;
@@ -230,15 +230,15 @@ input[type="checkbox"] {
     font-weight: 900;
 }
 
-.selections__searchDiv_showAll {
+.selections__search-div_show-all {
     background-color: #b1d877;
 }
 
-.selections__searchDiv_clear {
+.selections__search-div_clear {
     background-color: #f16a70;
 }
 
-.selections__searchDiv_btn:hover {
+.selections__search-div_btn:hover {
     background-color: #858585;
 }
 
@@ -251,7 +251,7 @@ input[type="checkbox"] {
 }
 
 @media only screen and (max-width: 650px) and (orientation: landscape) {
-    .searchFilterRevealHide {
+    .search-filter-reveal-hide {
         width: 50%;
         height: 7.5%;
         position: fixed;
@@ -260,18 +260,18 @@ input[type="checkbox"] {
         z-index: 2;
         background-color: #e6e87e;
     }
-    .searchFilterRevealHide p,
-    .selections__searchDiv_btn {
+    .search-filter-reveal-hide p,
+    .selections__search-div_btn {
         font-size: 4vh;
         font-weight: 900;
     }
-    .mainView__mapHolder {
+    .main-view__map-holder {
         height: 70%;
         width: 50%;
         position: fixed;
         top: 30%;
     }
-    .mainView__overlay-list {
+    .main-view__overlay-list {
         height: 82.5%;
         width: 50%;
         position: fixed;
@@ -288,7 +288,7 @@ input[type="checkbox"] {
     .selections p {
         font-size: 4vh
     }
-    .selections__searchDiv {
+    .selections__search-div {
         position: fixed;
         top: 10%;
         left: 0%;
@@ -296,7 +296,7 @@ input[type="checkbox"] {
         height: 20%;
         background-color: #e6e87e;
     }
-    .selections__searchDiv p {
+    .selections__search-div p {
         float: right;
         position: absolute;
         bottom: 15%;
@@ -305,11 +305,11 @@ input[type="checkbox"] {
         display: inline-block;
         font-size: 4vh;
     }
-    .selections__searchDiv_searchBox {
+    .selections__search-div_search-box {
         vertical-align: bottom;
         font-size: 3vh;
     }
-    .selections__searchDiv_btn {
+    .selections__search-div_btn {
         width: 50%;
         height: 50%;
         float: left;
@@ -317,23 +317,23 @@ input[type="checkbox"] {
         font-size: 4vh;
         padding: 2%;
     }
-    .selections__publicDiv {
+    .selections__public-div {
         width: 100%;
         height: 33%;
     }
-    .selections__decadeDiv,
-    .selections__architectDiv {
+    .selections__decade-div,
+    .selections__architect-div {
         width: 50%;
         height: 67%;
     }
-    .mainView__overlay-list_listContents_header h2,
-    .mainView__header h2 {
+    .main-view__overlay-list_list-contents_header h2,
+    .main-view__header h2 {
         font-size: 6vh;
     }
-    .selections__decadeDiv span,
-    .selections__decadeDiv_decadeInputContainer span,
-    .selections__architectDiv_architectInputContainer span,
-    .selections__publicDiv_publicDivInputContainer span {
+    .selections__decade-div span,
+    .selections__decade-div_decade-input-container span,
+    .selections__architect-div_architect-input-container span,
+    .selections__public-div_public-div-input-container span {
         display: flex;
         padding: .5vmax;
         border: solid;
@@ -349,33 +349,33 @@ input[type="checkbox"] {
 }
 
 @media only screen and (min-width: 651px) {
-    .searchFilterRevealHide {
+    .search-filter-reveal-hide {
         display: none;
     }
-    .mainView {
+    .main-view {
         height: 67%;
         position: fixed;
         width: 100%;
         top: 0;
     }
-    .mainView__header {
+    .main-view__header {
         height: 10%;
         width: 100%;
     }
-    .mainView__mapHolder,
-    .mainView__overlay-list {
+    .main-view__map-holder,
+    .main-view__overlay-list {
         height: 90%;
     }
-    .mainView__mapHolder {
+    .main-view__map-holder {
         width: 67%;
     }
-    .mainView__overlay-list {
+    .main-view__overlay-list {
         width: 33%;
     }
-    .mainView__overlay-list li {
+    .main-view__overlay-list li {
         font-size: 2.5vh;
     }
-    .mainView__overlay-list_noResults p {
+    .main-view__overlay-list_no-results p {
         font-size: 2vw;
     }
     .selections {
@@ -384,7 +384,7 @@ input[type="checkbox"] {
         width: 100%;
         top: 67%;
     }
-    .selections__searchDiv_btn {
+    .selections__search-div_btn {
         margin-bottom: 0;
         vertical-align: baseline;
         width: 33.5%;
@@ -401,61 +401,61 @@ input[type="checkbox"] {
         margin-left: auto;
         margin-right: auto;
     }
-    .selections__searchDiv {
+    .selections__search-div {
         height: 15%;
     }
-    .selections__searchDiv p {
+    .selections__search-div p {
         text-align: center;
         padding: 0;
         margin-left: 0;
     }
-    .selections__searchDiv p,
-    .selections__searchDiv_btn {
+    .selections__search-div p,
+    .selections__search-div_btn {
         float: right;
     }
-    .selections__searchDiv_btn {
+    .selections__search-div_btn {
         border-width: 0 .5vw 0 0;
         box-sizing: border-box;
         font-size: 2.5vh;
     }
-    .selections__searchDiv_searchBox {
+    .selections__search-div_search-box {
         width: 70%;
     }
     .selections p,
-    .selections__decadeDiv span,
-    .selections__decadeDiv_decadeInputContainer span,
-    .selections__architectDiv_architectInputContainer span,
-    .selections__publicDiv_publicDivInputContainer span {
+    .selections__decade-div span,
+    .selections__decade-div_decade-input-container span,
+    .selections__architect-div_architect-input-container span,
+    .selections__public-div_public-div-input-container span {
         font-size: 2.5vh;
         padding-top: 1vh;
     }
-    .selections__decadeDiv span,
-    .selections__decadeDiv_decadeInputContainer span,
-    .selections__architectDiv_architectInputContainer span,
-    .selections__publicDiv_publicDivInputContainer span {
+    .selections__decade-div span,
+    .selections__decade-div_decade-input-container span,
+    .selections__architect-div_architect-input-container span,
+    .selections__public-div_public-div-input-container span {
         margin: .5vh;
     }
-    .selections__searchDiv {
+    .selections__search-div {
         border-width: 0;
     }
-    .selections__searchDiv_btn,
-    .selections__decadeDiv {
+    .selections__search-div_btn,
+    .selections__decade-div {
         border-color: #b7b900;
         border-style: solid;
     }
-    .selections__decadeDiv,
-    .selections__architectDiv,
-    .selections__publicDiv {
+    .selections__decade-div,
+    .selections__architect-div,
+    .selections__public-div {
         height: 85%;
         float: left;
         box-sizing: border-box;
     }
-    .selections__decadeDiv,
-    .selections__architectDiv {
+    .selections__decade-div,
+    .selections__architect-div {
         width: 33.5%;
         border-width: .5vh .5vw 0 0;
     }
-    .selections__publicDiv {
+    .selections__public-div {
         width: 33%;
         border-width: .5vh 0 0 0;
     }

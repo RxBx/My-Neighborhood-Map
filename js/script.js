@@ -4,19 +4,20 @@
 var ViewModel = function() {
     var self = this;
     /*Prototype uses JSON placeObject properties to create robust objects for map and list functions*/
-    this.Place = function(placeObject) {
+    self.Place = function(placeObject) {
         this.name = placeObject.name;
         this.address1 = placeObject.address1;
         this.city = placeObject.city;
         this.access = placeObject.access;
         this.architect = placeObject.architect;
-        this.caseStudy = placeObject["Case Study"];
+        this.caseStudy = placeObject['Case Study'];
         this.year = placeObject.year;
         //empty marker to place & remove when selected
         this.marker = new google.maps.Marker({
             position: null,
-            map: null,
-            title: placeObject.name
+            map: self.map,
+            title: placeObject.name,
+            visible: false
         });
         //"exhibit" KO Observable determines if item appears in list
         this.exhibit = ko.observable(true);
@@ -24,14 +25,14 @@ var ViewModel = function() {
         this.searchString = (function() {
             var searchString = placeObject.name + placeObject.address1 + placeObject.city + placeObject.architect + placeObject.year;
             if (placeObject.caseStudy === true) {
-                searchString = searchString + "caseStudy";
+                searchString = searchString + 'caseStudy';
             }
             searchString = searchString.toLowerCase();
             return searchString;
         })();
     };
     //create map via Google API
-    this.map = new google.maps.Map(document.getElementById('map'), {
+    self.map = new google.maps.Map(document.getElementById('map'), {
         center: {
             lat: 34.0500,
             lng: -118.2500
@@ -44,17 +45,17 @@ var ViewModel = function() {
         },
     });
     //map bounds based on markers; is updated / renewed during KO list changes
-    this.markerBounds = new google.maps.LatLngBounds();
+    self.markerBounds = new google.maps.LatLngBounds();
     //empty info window; alters when list items are selected
-    this.infowindow = new google.maps.InfoWindow({
-        content: ""
+    self.infowindow = new google.maps.InfoWindow({
+        content: ''
     });
     //will receive placeObjects and allow for KO auto-update of view/html
-    this.placeList = ko.observableArray([]);
+    self.placeList = ko.observableArray([]);
     //triggers "scrollable" message in HTML in header for "Place List" when it exceeds height of div
-    this.listScroll = ko.observable(false);
+    self.listScroll = ko.observable(false);
     //Compares height of Place List to height of list div, and if larger, triggers "scroll" message in HTML
-    this.listScrollEval = function() {
+    self.listScrollEval = function() {
         var listHeight = $('#overlay-list_listContents ul').outerHeight(true);
         var listDivHeight = $('#overlay-list_listContents').height();
         if (listHeight > listDivHeight) {
@@ -64,9 +65,9 @@ var ViewModel = function() {
         }
     };
     //triggers on screen message if search/filters yield no results
-    this.noResults = ko.observable(false);
+    self.noResults = ko.observable(false);
     //"no results" eval is trigger "true" when KO hides all list items
-    this.noResultsEval = function() {
+    self.noResultsEval = function() {
         var totalListLength = $('#mainView__overlay-list_listContents_ul li').length;
         var hiddenListLength = $('#mainView__overlay-list_listContents_ul li:hidden').length;
 
@@ -76,38 +77,38 @@ var ViewModel = function() {
     };
 
     //Receives selections from html "decades" checkboxes
-    this.decades = ko.observableArray([]);
+    self.decades = ko.observableArray([]);
     //KO observables to help trigger CSS styling on selected checkboxes
-    this.decades1920 = ko.observable(false);
-    this.decades1930 = ko.observable(false);
-    this.decades1940 = ko.observable(false);
-    this.decades1950 = ko.observable(false);
-    this.decades1960 = ko.observable(false);
-    this.decades1970 = ko.observable(false);
-    this.decades1980 = ko.observable(false);
-    this.decades1990 = ko.observable(false);
-    this.decades2000 = ko.observable(false);
+    self.decades1920 = ko.observable(false);
+    self.decades1930 = ko.observable(false);
+    self.decades1940 = ko.observable(false);
+    self.decades1950 = ko.observable(false);
+    self.decades1960 = ko.observable(false);
+    self.decades1970 = ko.observable(false);
+    self.decades1980 = ko.observable(false);
+    self.decades1990 = ko.observable(false);
+    self.decades2000 = ko.observable(false);
     //Receives selections from html "architects" checkboxes
-    this.architect = ko.observableArray([]);
+    self.architect = ko.observableArray([]);
     //KO observables to trigger CSS styling on selected checkboxes
-    this.wright = ko.observable(false);
-    this.schindler = ko.observable(false);
-    this.neutra = ko.observable(false);
-    this.lautner = ko.observable(false);
-    this.gehry = ko.observable(false);
+    self.wright = ko.observable(false);
+    self.schindler = ko.observable(false);
+    self.neutra = ko.observable(false);
+    self.lautner = ko.observable(false);
+    self.gehry = ko.observable(false);
     //KO Observable to trigger CSS styling on the checkbox, and for use in filter eval
-    this.caseStudy = ko.observable(false);
+    self.caseStudy = ko.observable(false);
     //Receives selections from html "access" checkboxes
-    this.access = ko.observableArray([]);
+    self.access = ko.observableArray([]);
     //KO Observables to trigger CSS styling on selected checkboxes
-    this.public = ko.observable(false);
-    this.tours = ko.observable(false);
-    this.exterior = ko.observable(false);
-    this.private = ko.observable(false);
+    self.public = ko.observable(false);
+    self.tours = ko.observable(false);
+    self.exterior = ko.observable(false);
+    self.private = ko.observable(false);
     //KO observable - initial value is empty for search
-    this.search = ko.observable("");
+    self.search = ko.observable('');
     /*Main engine to evaluate visibility of list items based on chosen filters and search*/
-    this.evaluateExhibit = function() {
+    self.evaluateExhibit = function() {
         //stop bouncing marker
         self.placeList().forEach(function(placeObject) {
             if (placeObject.marker.getAnimation() !==null) {
@@ -227,7 +228,7 @@ var ViewModel = function() {
                 } else {
                     placeObject.exhibit(false);
                 }
-            } else if ((self.search() === "") && (placeObject.exhibit() === true)) {
+            } else if ((self.search() === '') && (placeObject.exhibit() === true)) {
                 placeObject.exhibit(true);
             }
 
@@ -249,43 +250,43 @@ var ViewModel = function() {
     };
 
     //PUSHES ALL MODEL DATA OBJECTS INTO KO OBS ARRAY AS NEW "placeObject"'s
-    this.sortPlaces = function(data) {
+    self.sortPlaces = function(data) {
         data.forEach(function(placeObject) {
             self.placeList().push(new self.Place(placeObject));
         });
     };
     //updates all markers, usu called after "exhibit" is evaluated
-    this.setMarkers = function() {
+    self.setMarkers = function() {
         self.placeList().forEach(self.markerSpinner);
     };
     //geocode function uses getJSON to retrieve LatLng from Google Maps Geocode API
-    this.geocode = function(item) {
-        var geocodeURL = "https://maps.googleapis.com/maps/api/geocode/json";
+    self.geocode = function(item) {
+        var geocodeURL = 'https://maps.googleapis.com/maps/api/geocode/json';
         // Google Geocode API key - different from Map key
-        var apiKeyGeocode = "AIzaSyBkBk3maFmugZtnSWKTkFMK2CXIe0c_20k";
+        var apiKeyGeocode = 'AIzaSyBkBk3maFmugZtnSWKTkFMK2CXIe0c_20k';
 
         var address1 = item.address1;
         var city = item.city;
-        var addressArray = address1.split(" "); //geting rid of white spaces
+        var addressArray = address1.split(' '); //geting rid of white spaces
         var streetAddressQueriable = addressArray[0]; //begin piece of API URL
         for (var i = 1, len = addressArray.length; i < len; i++) {
-            streetAddressQueriable += "+" + addressArray[i]; //reconsituting address for API URL
+            streetAddressQueriable += '+' + addressArray[i]; //reconsituting address for API URL
         }
 
-        var addressStringAddress = streetAddressQueriable + ",+" + city + ",+CA";
+        var addressStringAddress = streetAddressQueriable + ',+' + city + ',+CA';
         var geocodeDataAddress = {
             address: addressStringAddress,
             key: apiKeyGeocode
         };
         //Error messaging if no response from Google Geocode
         var geocodeFailTimeout = setTimeout(function() {
-            $('#error').text("Error: Google Map Geocoder is failing to connect")
+            $('#error').text('Error: Google Map Geocoder is failing to connect')
                 .removeClass('noerror').addClass('error');
         }, 3000);
 
         $.getJSON(geocodeURL, geocodeDataAddress, function(data) {
             var LatLng;
-            if (data.status === "OK") {
+            if (data.status === 'OK') {
                 clearTimeout(geocodeFailTimeout);
                 LatLng = data.results[0].geometry.location;
 
@@ -294,7 +295,7 @@ var ViewModel = function() {
                 item.marker.addListener('click', function() {
                     self.infoWindowOpener(item);
                 });
-            } else if (data.status === "OVER_QUERY_LIMIT") {
+            } else if (data.status === 'OVER_QUERY_LIMIT') {
                 clearTimeout(geocodeFailTimeout);
                 //if Geocoder hits limit, re-submit SAME counter number, to re-run the Geocode request
                 self.geocode(item);
@@ -304,12 +305,12 @@ var ViewModel = function() {
                 var requestGeocodeTimeout = setTimeout(function() {
                     $('#error').removeClass('error').addClass('noerror');
                 }, 8000);
-                $('#error').text("Error: Google Map Geocoder failed on at least one address lookup. Message: " + data.status)
+                $('#error').text('Error: Google Map Geocoder failed on at least one address lookup. Message: ' + data.status)
                     .removeClass('noerror').addClass('error');
             }
             //update map window view
             if ((item.exhibit() === true) && (item.marker.getPosition() !== null)) {
-                item.marker.setMap(self.map);
+                item.marker.setVisible(true);
                 self.markerBounds.extend(item.marker.getPosition());
                 self.map.fitBounds(self.markerBounds);
 
@@ -321,7 +322,7 @@ var ViewModel = function() {
     };
     //Onn first run, geocodes any "exhibit: true" markers;
     //on all runs, sets "exhibit===true" markers on map, removes "exhibit===false" markers
-    this.markerSpinner = function(item) {
+    self.markerSpinner = function(item) {
 
         if ((item.exhibit() === true) && (item.marker.getPosition() === null)) {
             //TODO: Unmask geocode below, so the markers begin appearing after Google releases
@@ -329,16 +330,16 @@ var ViewModel = function() {
 
         } else if (item.exhibit() === true) {
             self.markerBounds.extend(item.marker.getPosition());
-            item.marker.setMap(self.map);
+            item.marker.setVisible(true);
             self.map.fitBounds(self.markerBounds);
             self.map.panToBounds(self.markerBounds);
 
         } else {
-            item.marker.setMap(null);
+            item.marker.setVisible(false);
         }
     };
     //Function to construct the info window, incl. AJAX req to Wikipedia for info link, with error handling
-    this.infoWindowOpener = function(item) {
+    self.infoWindowOpener = function(item) {
         //stops bouncing markers
         self.placeList().forEach(function(placeObject) {
             if (placeObject.marker.getAnimation() !==null) {
@@ -353,22 +354,22 @@ var ViewModel = function() {
         var accessLetter = item.access;
 
         var accessStringEval = function(accessLetter) {
-            if (accessLetter === "e") {
-                return "Exterior View";
-            } else if (accessLetter === "o") {
-                return "Public Access";
-            } else if (accessLetter === "t") {
-                return "Access via Tours/Appointments";
-            } else if (accessLetter === "p") {
-                return "Private Residence - No Access";
+            if (accessLetter === 'e') {
+                return 'Exterior View';
+            } else if (accessLetter === 'o') {
+                return 'Public Access';
+            } else if (accessLetter === 't') {
+                return 'Access via Tours/Appointments';
+            } else if (accessLetter === 'p') {
+                return 'Private Residence - No Access';
             }
         };
 
         var accessString = accessStringEval(accessLetter);
         //prepare Wikipedia request
         var searchItemEval = function(item) {
-            if (item.caseStudy === true && item.architect !== "Richard Neutra") {
-                return "Case Study Houses";
+            if (item.caseStudy === true && item.architect !== 'Richard Neutra') {
+                return 'Case Study Houses';
             } else {
                 return item.architect;
             }
@@ -388,11 +389,11 @@ var ViewModel = function() {
         $.ajax({
             url: wikiUrl,
             data: {
-                action: "opensearch",
+                action: 'opensearch',
                 search: searchItem,
                 namespace: 0
             },
-            dataType: "jsonp"
+            dataType: 'jsonp'
         }).done(function(response) {
             clearTimeout(requestWikiTimeout);
             var wikiItems = response;
@@ -414,7 +415,7 @@ var ViewModel = function() {
         });
     };
     //function to show all items in PlaceList and on map
-    this.showAll = function() {
+    self.showAll = function() {
         self.decades([]);
         self.architect([]);
         self.caseStudy(false);
@@ -422,7 +423,7 @@ var ViewModel = function() {
         self.search("");
     };
     //function to clear all items from PlaceList and from map
-    this.clearMap = function() {
+    self.clearMap = function() {
         /* TO DO - automate "selection" box open/close on timer from last user engage
         if (window.closeSelections) {
             window.clearTimeout(window.closeSelections);
@@ -442,7 +443,7 @@ var ViewModel = function() {
         self.setMarkers();
     };
     //detects if View is in mobile landscape mode
-    this.isMobileLandscape = function() {
+    self.isMobileLandscape = function() {
         if (window.innerWidth < 651 && window.innerHeight < window.innerWidth) {
             return true;
         } else {
@@ -450,7 +451,7 @@ var ViewModel = function() {
         }
     };
     //A toggle system that shows/hides the search/filter box on smaller screens. Larger screens do not use this
-    this.toggleSelections = function() {
+    self.toggleSelections = function() {
         if (self.isMobileLandscape() === false && $('#selections').position().top === window.innerHeight / 2) {
             /* TO DO - automate "selection" box open/close on timer from last user engage
             if (window.closeSelections) {
@@ -507,7 +508,7 @@ var ViewModel = function() {
     };
 
     //Function to update selected Decade KO observables for KO CSS style change
-    this.updateStyleDecade = function() {
+    self.updateStyleDecade = function() {
         self.decades1920(false);
         self.decades1930(false);
         self.decades1940(false);
@@ -529,7 +530,7 @@ var ViewModel = function() {
     self.decades.subscribe(self.updateStyleDecade);
 
     //Update selected Architect KO observables as KO styling trigger
-    this.updateStyleArchitect = function() {
+    self.updateStyleArchitect = function() {
         self.wright(false);
         self.schindler(false);
         self.neutra(false);
@@ -539,14 +540,14 @@ var ViewModel = function() {
             //sets value to decade to be checked
             var matcher = self.architect()[i];
             //loop to eval which architects are present, & set values in KO obs that trigger CSS for selected archs
-            if (matcher === "Frank Lloyd Wright") { self.wright(true); } else if (matcher === "Schindler") { self.schindler(true); } else if (matcher === "Neutra") { self.neutra(true); } else if (matcher === "Lautner") { self.lautner(true); } else if (matcher === "Gehry") { self.gehry(true); }
+            if (matcher === 'Frank Lloyd Wright') { self.wright(true); } else if (matcher === 'Schindler') { self.schindler(true); } else if (matcher === 'Neutra') { self.neutra(true); } else if (matcher === 'Lautner') { self.lautner(true); } else if (matcher === 'Gehry') { self.gehry(true); }
         }
     };
     //subscribe udpate to changes in KO Obs Array Architect
     self.architect.subscribe(self.updateStyleArchitect);
 
     //Update selected Access KO observables as KOstyling trigger
-    this.updateStyleAccess = function() {
+    self.updateStyleAccess = function() {
         self.public(false);
         self.tours(false);
         self.exterior(false);
@@ -568,7 +569,7 @@ var ViewModel = function() {
     self.access.subscribe(self.evaluateExhibit);
     self.search.subscribe(self.evaluateExhibit);
     //Event listener  on "orientationchange" event to cue CSS changes if mobile screen orientation changes
-    window.addEventListener("orientationchange", function() {
+    window.addEventListener('orientationchange', function() {
         if (self.isMobileLandscape() === true) {
             $('#searchFilterRevealHideText').text('Search/Filters');
             $('#selections').css({
@@ -592,7 +593,7 @@ var ViewModel = function() {
         }
     });
     //Event listener  on "resize" event to cue CSS changes if mobile screen orientation changes
-    window.addEventListener("resize", function() {
+    window.addEventListener('resize', function() {
         if (self.isMobileLandscape() === true) {
             $('#searchFilterRevealHideText').text('Search/Filters');
             $('#selections').css({
@@ -620,7 +621,7 @@ var ViewModel = function() {
     self.sortPlaces(masterList);
 
     //change KO "access" to display all "non private" placeOjbects () "o", "t", "e" ) at first run.
-    self.access(["o", "t", "e"]);
+    self.access(['o', 't', 'e']);
 
     setTimeout(function() {
             self.listScrollEval();
@@ -644,21 +645,5 @@ var startApp = function() {
 };
 //Error function run by "onerror" if Google Map API script fails to load
 var errorCall = function() {
-    var elem = document.createElement('p');
-    //if errorCall is invoked before parser creates document.body, then create it
-    if (!document.body) {
-        var dom = document.implementation.createDocument('http://www.w3.org/1999/xhtml', 'html', null);
-        var body = dom.createElement("body");
-
-        dom.documentElement.appendChild(body);
-        // setTimeout used to create slight seperation between body creation and append "p"
-        setTimeout(function() {
-            document.body.appendChild(elem);
-            $('p').attr('id', 'error');
-            $('#error').text("Error: Google Map API failed to load").removeClass('noerror').addClass('error');
-        }, 0);
-    } else {
-        //if body already exists, simply attach error message
-        $('#error').text("Error: Google Map API failed to load").removeClass('noerror').addClass('error');
-    }
+        $('#error').text('Error: Google Map API failed to load').removeClass('noerror').addClass('error');
 };
