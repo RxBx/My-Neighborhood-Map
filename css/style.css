@@ -138,6 +138,9 @@ input[type="checkbox"] {
     top: 50%;
     z-index: 1;
     background-color: #e6e87e;
+    /* Allows KO changes to "top" style to animate */
+    -webkit-transition: top 0.3s;
+    transition: top 0.3s;
 }
 
 .selections p {
@@ -349,9 +352,6 @@ input[type="checkbox"] {
 }
 
 @media only screen and (min-width: 651px) {
-    .search-filter-reveal-hide {
-        display: none;
-    }
     .main-view {
         height: 67%;
         position: fixed;

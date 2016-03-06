@@ -111,9 +111,9 @@ var ViewModel = function() {
     self.evaluateExhibit = function() {
         //stop bouncing marker
         self.placeList().forEach(function(placeObject) {
-            if (placeObject.marker.getAnimation() !==null) {
-                    placeObject.marker.setAnimation(null);
-                }
+            if (placeObject.marker.getAnimation() !== null) {
+                placeObject.marker.setAnimation(null);
+            }
         });
         /* TO DO - automate "selection" box open/close on timer from last user engage
         if (window.closeSelections) {
@@ -342,9 +342,9 @@ var ViewModel = function() {
     self.infoWindowOpener = function(item) {
         //stops bouncing markers
         self.placeList().forEach(function(placeObject) {
-            if (placeObject.marker.getAnimation() !==null) {
-                    placeObject.marker.setAnimation(null);
-                }
+            if (placeObject.marker.getAnimation() !== null) {
+                placeObject.marker.setAnimation(null);
+            }
         });
         //close any open infowindow
         self.infowindow.close();
@@ -442,70 +442,9 @@ var ViewModel = function() {
         self.noResults(true);
         self.setMarkers();
     };
-    //detects if View is in mobile landscape mode
-    self.isMobileLandscape = function() {
-        if (window.innerWidth < 651 && window.innerHeight < window.innerWidth) {
-            return true;
-        } else {
-            return false;
-        }
-    };
+
     //A toggle system that shows/hides the search/filter box on smaller screens. Larger screens do not use this
-    self.toggleSelections = function() {
-        if (self.isMobileLandscape() === false && $('#selections').position().top === window.innerHeight / 2) {
-            /* TO DO - automate "selection" box open/close on timer from last user engage
-            if (window.closeSelections) {
-                window.clearTimeout(window.closeSelections);
-            }*/
 
-            $('#selections').animate({
-                top: '100%'
-            }, 250);
-            $('#searchFilterRevealHide').css({
-                'background-color': '#e6e87e'
-            });
-            $('#searchFilterRevealHideText').text('Search/Filters');
-        } else if (self.isMobileLandscape() === false) {
-            $('#selections').animate({
-                top: '50%'
-            }, 250);
-            $('#searchFilterRevealHide').css({
-                'background-color': '#8cdcda'
-            });
-
-            $('#searchFilterRevealHideText').text('See List');
-            /* TO DO - automate "selection" box open/close on timer from last user engage
-            window.closeSelections = setTimeout(function() {
-                $('#selections').animate({
-                    top: '100%'
-                }, 250);
-                $('#searchFilterRevealHide').css({
-                'background-color':'#ff0'
-            });
-                $('#searchFilterRevealHideText').text('Search/Filters');
-            }, 5000);*/
-        } else if (self.isMobileLandscape() === true && $('#selections').position().top < 0.11 * window.innerHeight) {
-            $('#searchFilterRevealHideText').text('Search/Filters');
-            $('#selections').animate({
-                top: '92.5%'
-            }, 250);
-            $('#searchFilterRevealHide').css({
-                'background-color': '#e6e87e'
-            });
-        } else if (self.isMobileLandscape() === true && $('#selections').position().top > 0.11 * window.innerHeight) {
-            /* TO DO - automate "selection" box open/close on timer from last user engage
-            if (window.closeSelections) {
-                window.clearTimeout(window.closeSelections);
-            }*/
-            $('#searchFilterRevealHideText').text('See List');
-            $('#selections').animate({
-                top: '10%'
-            }, 250);
-            $('#searchFilterRevealHide').css({
-                'background-color': '#8cdcda'
-            });
-        }
-    };
 
     //Function to update selected Decade KO observables for KO CSS style change
     self.updateStyleDecade = function() {
@@ -568,66 +507,104 @@ var ViewModel = function() {
     self.architect.subscribe(self.evaluateExhibit);
     self.access.subscribe(self.evaluateExhibit);
     self.search.subscribe(self.evaluateExhibit);
-    //Event listener  on "orientationchange" event to cue CSS changes if mobile screen orientation changes
-    window.addEventListener('orientationchange', function() {
-        if (self.isMobileLandscape() === true) {
-            $('#searchFilterRevealHideText').text('Search/Filters');
-            $('#selections').css({
-                top: '100%'
-            });
-            $('#searchFilterRevealHide').css({
-                'background-color': '#e6e87e'
-            });
-        } else if (window.innerWidth < 651) {
-            $('#searchFilterRevealHideText').text('See List');
-            $('#selections').css({
-                top: '50%'
-            });
-            $('#searchFilterRevealHide').css({
-                'background-color': '#8cdcda'
-            });
+    //KO Obs holds current mobile state based on screen width
+    self.isMobile = ko.observable((function() {
+        if (window.innerWidth < 651) {
+            return true;
+        } else {
+            return false;
         }
-        self.map.fitBounds(self.markerBounds);
-        if (self.map.getZoom() > 11) {
-            self.map.setZoom(11);
+    })());
+    //KO Obs holds current orientation state based on screen width
+    self.isLandscape = ko.observable((function() {
+        if (window.innerWidth > window.innerHeight) {
+            return true;
+        } else {
+            return false;
+        }
+    })());
+    //KO Obs holds choice show/hide "selection" filter/search div
+    self.showSelections = ko.observable(true);
+    //KO computed that sets style "top" value times when mobile selection screen is hidden
+    self.selectionDown = ko.computed(function() {
+        //fullsize screens "isMobile: false" do not receive a value
+        if (self.isMobile() === false) {
+            return;
+        } else {
+            if (self.isLandscape() === true) {
+                return '92.5%';
+            } else {
+                return '100%';
+            }
         }
     });
-    //Event listener  on "resize" event to cue CSS changes if mobile screen orientation changes
-    window.addEventListener('resize', function() {
-        if (self.isMobileLandscape() === true) {
-            $('#searchFilterRevealHideText').text('Search/Filters');
-            $('#selections').css({
-                top: '100%'
-            });
-            $('#searchFilterRevealHide').css({
-                'background-color': '#e6e87e'
-            });
-        } else if (window.innerWidth < 651) {
-            $('#searchFilterRevealHideText').text('See List');
-            $('#selections').css({
-                top: '50%'
-            });
-            $('#searchFilterRevealHide').css({
-                'background-color': '#8cdcda'
-            });
+    //KO computed that sets style "top" value times when mobile selection screen is shown
+    self.selectionUp = ko.computed(function() {
+        //fullsize screens "isMobile: false" do not receive a value
+        if (self.isMobile() === false) {
+            return;
+        } else {
+            if (self.isLandscape() === true) {
+                return '10%';
+            } else {
+                return '50%';
+            }
         }
-        self.map.fitBounds(self.markerBounds);
-        if (self.map.getZoom() > 11) {
-            self.map.setZoom(11);
+    });
+    //for mobile users, when "searchFilterRevealHide" is clicked, toggles view of "selections " & list
+    self.toggleSelections = function() {
+        if (self.showSelections() === true) {
+            self.showSelections(false);
+        } else if (self.showSelections() === false) {
+            self.showSelections(true);
         }
+    };
+    //a function to eval KO obs "isMobile" & "isLandscape" to trigger KO style changes
+    //also re-bounds map after 200ms set timeout, once screen settles
+    self.screenAdjust = function() {
+        if (window.innerWidth < 651) {
+            self.isMobile(true);
+        } else {
+            self.isMobile(false);
+        }
+        if (window.innerWidth > window.innerHeight) {
+            self.isLandscape(true);
+        } else {
+            self.isLandscape(false);
+        }
+        self.markerBounds = new google.maps.LatLngBounds();
+        self.placeList().forEach(function(placeObject) {
+            if (placeObject.marker.getVisible() === true) {
+                self.markerBounds.extend(placeObject.marker.getPosition());
+            }
+        });
+        setTimeout(function() {
+            self.map.fitBounds(self.markerBounds);
+            if (self.map.getZoom() > 11) {
+                self.map.setZoom(11);
+            }
+        }, 200);
+
+    };
+    //Jquery trigger to run screenAdjust function on resize
+    $(window).on('resize', function() {
+        self.screenAdjust();
+    });
+    //Jquery trigger to run screenAdjust function on orientationchange
+    $(window).on('orientationchange', function() {
+        self.screenAdjust();
     });
 
-    //load "masterList" JSON database
     self.sortPlaces(masterList);
 
     //change KO "access" to display all "non private" placeOjbects () "o", "t", "e" ) at first run.
     self.access(['o', 't', 'e']);
 
     setTimeout(function() {
-            self.listScrollEval();
-        }, 100);
+        self.listScrollEval();
+    }, 100);
     /* TO DO - automate "selection" box open/close on timer from last user engage
-        if (self.isMobileLandscape()===true) {
+        if ( ) {
             if (window.closeSelections) {
                 window.clearTimeout(window.closeSelections);
             }
@@ -645,5 +622,5 @@ var startApp = function() {
 };
 //Error function run by "onerror" if Google Map API script fails to load
 var errorCall = function() {
-        $('#error').text('Error: Google Map API failed to load').removeClass('noerror').addClass('error');
+    $('#error').text('Error: Google Map API failed to load').removeClass('noerror').addClass('error');
 };
