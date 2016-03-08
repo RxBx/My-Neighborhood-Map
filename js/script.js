@@ -255,11 +255,10 @@ var ViewModel = function() {
     //PUSHES ALL MODEL DATA OBJECTS INTO KO placeList OBS ARRAY AS NEW "placeObject"'s
     self.sortPlaces = function(data) {
         var len = data.length;
-        console.log('length of the data array: ' + len);
         for (var i = 0; i < len; i++) {
-            console.log(data[i]);
             self.placeList().push(new self.Place(data[i]));
         }
+        //sets filters on first run
         self.firstRun();
 
     };
