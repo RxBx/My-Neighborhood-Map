@@ -11,14 +11,14 @@
 <body>
     <div id="container" class="container">
         <!-- "error" element is "display: none" until an error message is invoked; takes no screen area -->
-        <p id="error" class="noerror"></p>
+        <!-- App displays error message via Knockout JS-->
+        <p id="error" class="error" data-bind="visible: error, text: errorMessage"></p>
         <!-- KO obs "showSelections" displays element when "mobile", hides when full screen-->
         <!-- style is toggle by KO Obs to change color based on state of showSelections KO obs -->
         <!-- a clickable element uses KO to toggle between Place List and Search/Filter box -->
         <div id="searchFilterRevealHide" class="search-filter-reveal-hide" data-bind="visible: isMobile, click: toggleSelections, style: {backgroundColor: showSelections() ? '#8cdcda' : '#e6e87e' }">
-            <!-- 2 p's below toggle visible text based on true-false state of "showSelections"-->
-            <p id="searchFilterRevealHideTextFilters" class="search-filter-reveal-hide_text" data-bind="visible: showSelections">See List</p>
-            <p id="searchFilterRevealHideTextList" class="search-filter-reveal-hide_text" data-bind="visible: showSelections() < 1">Search/Filters</p>
+            <!-- 2 spans below toggle visible text based on true-false state of "showSelections"-->
+            <p id="searchFilterRevealHideTextFilters" class="search-filter-reveal-hide_text"> <span data-bind="visible: showSelections">See List</span><span data-bind="visible: showSelections() < 1">Search/Filters</span></p>
         </div>
         <!-- Main search/filter area of app -->
         <!-- selections div shows/hides based on state of "showSelections" KO Obs;
@@ -26,14 +26,14 @@
         <div id="selections" class="selections" data-bind="style: {top: showSelections() ? selectionUp() : selectionDown()}">
             <div id="searchDiv" class="selections__search-div">
                 <!-- KO textInput triggers Place List eval-->
-                <p>Search?
+                <div class="selections__search-div_container"><p>Search?
                     <input type="text" id="search" class="selections__search-div_search-box" data-bind="textInput: search">
-                </p>
+                </p></div>
                 <!-- click triggers KO to run function to clear or show all Place Objects-->
                 <div id="showAllButton" class="selections__search-div_btn selections__search-div_show-all" data-bind="click: showAll">Show All</div>
                 <div id="clearMap" class="selections__search-div_btn selections__search-div_clear" data-bind="click: clearMap">Clear Map</div>
             </div>
-            <!-- A system of checkbox uses KO to enter filter data, and run Place List Eval; also KO re-styles selections-->
+            <!-- A system of checkboxes uses KO to enter filter data, and run Place List Eval; also KO re-styles selections-->
             <div id="decadeDiv" class="selections__decade-div">
                 <p>Decade?</p>
                 <div id="decadeInputContainer" class="selections__decade-div_decade-input-container">
@@ -48,7 +48,7 @@
                     <span data-bind="css: { select: decades2000() === true }"><label>2000s<input type="checkbox" name="decade" value="2000" data-bind="checked: decades"></label></span>
                 </div>
             </div>
-            <!-- A system of checkbox uses KO to enter filter data, and run Place List Eval; also KO re-styles selections-->
+            <!-- A system of checkboxes uses KO to enter filter data, and run Place List Eval; also KO re-styles selections-->
             <div id="architectDiv" class="selections__architect-div">
                 <p>Architect?</p>
                 <div id="architectInputContainer" class="selections__architect-div_architect-input-container">
@@ -60,7 +60,7 @@
                     <span data-bind="css: { select: caseStudy() === true }"><label>Case Study<input type="checkbox" name="architect" value="true" data-bind="checked: caseStudy"></label></span>
                 </div>
             </div>
-            <!-- A system of checkbox uses KO to enter filter data, and run Place List Eval; also KO re-styles selections-->
+            <!-- A system of checkboxes uses KO to enter filter data, and run Place List Eval; also KO re-styles selections-->
             <div id="publicDiv" class="selections__public-div">
                 <p>Access?</p>
                 <div id="publicInputContainer" class="selections__public-div_public-div-input-container">

@@ -3,6 +3,7 @@
 /* App is fully contained inside the ViewModel */
 var ViewModel = function() {
     var self = this;
+
     /*Prototype uses JSON placeObject properties to create robust objects for map and list functions*/
     self.Place = function(placeObject) {
         this.name = placeObject.name;
@@ -50,8 +51,13 @@ var ViewModel = function() {
     self.infowindow = new google.maps.InfoWindow({
         content: ''
     });
+    //KO Observables to trigger error messages
+    self.error = ko.observable(false);
+    self.errorMessage = ko.observable('');
+
     //will receive placeObjects and allow for KO auto-update of view/html
     self.placeList = ko.observableArray([]);
+
     //triggers "scrollable" message in HTML in header for "Place List" when it exceeds height of div
     self.listScroll = ko.observable(false);
     //Compares height of Place List to height of list div, and if larger, triggers "scroll" message in HTML
@@ -70,7 +76,6 @@ var ViewModel = function() {
     self.noResultsEval = function() {
         var totalListLength = $('#mainView__overlay-list_listContents_ul li').length;
         var hiddenListLength = $('#mainView__overlay-list_listContents_ul li:hidden').length;
-
         if (hiddenListLength === totalListLength) {
             self.noResults(true);
         } else { self.noResults(false); }
@@ -136,7 +141,7 @@ var ViewModel = function() {
             //This will be evaluated filter-by-filter;
             placeObject.exhibit(false);
 
-            //check for "access" filter
+            //"Access" filter
             //when filter isn't empty, placeObject access letter against access array;
             //Match sets "exhibit" to "true"
             if (self.access().length > 0) {
@@ -196,7 +201,6 @@ var ViewModel = function() {
                     }
                 }
             }
-
             //Decades filter
             if (placeObject.exhibit() === true) {
                 if (self.decades().length > 0) {
@@ -231,7 +235,6 @@ var ViewModel = function() {
             } else if ((self.search() === '') && (placeObject.exhibit() === true)) {
                 placeObject.exhibit(true);
             }
-
         });
         //check to see if list overflows div; if so set to "true"
         self.listScrollEval();
@@ -249,11 +252,16 @@ var ViewModel = function() {
         }
     };
 
-    //PUSHES ALL MODEL DATA OBJECTS INTO KO OBS ARRAY AS NEW "placeObject"'s
+    //PUSHES ALL MODEL DATA OBJECTS INTO KO placeList OBS ARRAY AS NEW "placeObject"'s
     self.sortPlaces = function(data) {
-        data.forEach(function(placeObject) {
-            self.placeList().push(new self.Place(placeObject));
-        });
+        var len = data.length;
+        console.log('length of the data array: ' + len);
+        for (var i = 0; i < len; i++) {
+            console.log(data[i]);
+            self.placeList().push(new self.Place(data[i]));
+        }
+        self.firstRun();
+
     };
     //updates all markers, usu called after "exhibit" is evaluated
     self.setMarkers = function() {
@@ -278,10 +286,10 @@ var ViewModel = function() {
             address: addressStringAddress,
             key: apiKeyGeocode
         };
-        //Error messaging if no response from Google Geocode
+        //Error messaging if no response from Google Geocode via Knockout JS
         var geocodeFailTimeout = setTimeout(function() {
-            $('#error').text('Error: Google Map Geocoder is failing to connect')
-                .removeClass('noerror').addClass('error');
+            self.error(true);
+            self.errorMessage('Error: Google Map Geocoder is failing to connect');
         }, 3000);
 
         $.getJSON(geocodeURL, geocodeDataAddress, function(data) {
@@ -301,12 +309,9 @@ var ViewModel = function() {
                 self.geocode(item);
             } else {
                 clearTimeout(geocodeFailTimeout);
-                //Other Geocode errors prompts on screen message
-                var requestGeocodeTimeout = setTimeout(function() {
-                    $('#error').removeClass('error').addClass('noerror');
-                }, 8000);
-                $('#error').text('Error: Google Map Geocoder failed on at least one address lookup. Message: ' + data.status)
-                    .removeClass('noerror').addClass('error');
+                //Other Geocode errors prompts on screen message via Knockout JS
+                self.error(true);
+                self.errorMessage('Error: Google Map Geocoder failed on at least one address lookup. Message: ' + data.status);
             }
             //update map window view
             if ((item.exhibit() === true) && (item.marker.getPosition() !== null)) {
@@ -320,7 +325,7 @@ var ViewModel = function() {
             }
         });
     };
-    //Onn first run, geocodes any "exhibit: true" markers;
+    //On first run, geocodes any "exhibit: true" markers;
     //on all runs, sets "exhibit===true" markers on map, removes "exhibit===false" markers
     self.markerSpinner = function(item) {
 
@@ -377,7 +382,7 @@ var ViewModel = function() {
 
         var searchItem = searchItemEval(item);
 
-        var wikiUrl = 'http://en.wikipedia.org/w/api.php';
+        var wikiUrl = 'http://wikipedia.org/w/api.php';
         //Error message from timeout if Wikip does not respond
         var requestWikiTimeout = setTimeout(function() {
             var windowContent = '<p>' + item.name + '</p>' + '<p>' + item.address1 + ', ' + item.city + '</p>' + '<p>Year Built: ' + item.year + '</p>' + '<p>Architect(s): ' + item.architect + '</p>' +
@@ -399,8 +404,8 @@ var ViewModel = function() {
             var wikiItems = response;
             var wikiLine = '<p><a href="' + wikiItems[3][0] + '" target="_blank">' + 'Wikipedia link' + '</a></p>';
 
-            var windowContent = '<p>' + item.name + '</p>' + '<p>' + item.address1 + ', ' + item.city + '</p>' + '<p>Year Built: ' + item.year + '</p>' + '<p>Architect(s): ' + item.architect + '</p>' +
-                '<p>' + accessString + '</p>' + wikiLine;
+            var windowContent = '<div class="infowindow"><p>' + item.name + '</p>' + '<p>' + item.address1 + ', ' + item.city + '</p>' + '<p>Year Built: ' + item.year + '</p>' + '<p>Architect(s): ' + item.architect + '</p>' +
+                '<p>' + accessString + '</p>' + wikiLine + '</div>';
 
             self.infowindow.setContent(windowContent);
             self.infowindow.open(self.map, item.marker);
@@ -408,8 +413,8 @@ var ViewModel = function() {
         }).fail(function(response) {
             //failure reply from Wikip generates a "link free" version of infowindow
             clearTimeout(requestWikiTimeout);
-            var windowContent = '<p>' + item.name + '</p>' + '<p>' + item.address1 + ', ' + item.city + '</p>' + '<p>Year Built: ' + item.year + '</p>' + '<p>Architect(s): ' + item.architect + '</p>' +
-                '<p>' + accessString + '</p>';
+            var windowContent = '<div class="infowindow"><p>' + item.name + '</p>' + '<p>' + item.address1 + ', ' + item.city + '</p>' + '<p>Year Built: ' + item.year + '</p>' + '<p>Architect(s): ' + item.architect + '</p>' +
+                '<p>' + accessString + '</p>' + '<p class="warning">Wikipedia link failed to load</p></div>';
             self.infowindow.setContent(windowContent);
             self.infowindow.open(self.map, item.marker);
         });
@@ -442,10 +447,6 @@ var ViewModel = function() {
         self.noResults(true);
         self.setMarkers();
     };
-
-    //A toggle system that shows/hides the search/filter box on smaller screens. Larger screens do not use this
-
-
     //Function to update selected Decade KO observables for KO CSS style change
     self.updateStyleDecade = function() {
         self.decades1920(false);
@@ -595,32 +596,71 @@ var ViewModel = function() {
         self.screenAdjust();
     });
 
-    self.sortPlaces(masterList);
+    self.firstRun = function() {
+        //change KO "access" to display all "non private" placeOjbects () "o", "t", "e" ) at first run.
+        self.noResultsEval();
+        self.access(['o', 't', 'e']);
 
-    //change KO "access" to display all "non private" placeOjbects () "o", "t", "e" ) at first run.
-    self.access(['o', 't', 'e']);
-
-    setTimeout(function() {
-        self.listScrollEval();
-    }, 100);
-    /* TO DO - automate "selection" box open/close on timer from last user engage
-        if ( ) {
-            if (window.closeSelections) {
-                window.clearTimeout(window.closeSelections);
-            }
-            $('#selections').css({
-                top: '92.5%'
-            });
-            $('#searchFilterRevealHide').css({
-                'background-color': '#ff0'
-            });
-        }*/
+        setTimeout(function() {
+            self.listScrollEval();
+        }, 100);
+        /* TO DO - automate "selection" box open/close on timer from last user engage
+            if ( ) {
+                if (window.closeSelections) {
+                    window.clearTimeout(window.closeSelections);
+                }
+                $('#selections').css({
+                    top: '92.5%'
+                });
+                $('#searchFilterRevealHide').css({
+                    'background-color': '#ff0'
+                });
+            }*/
+    };
+    //function to populate the placeList with Data collected from Ajax request
+    self.sortPlaces(ajaxList);
 };
-//First run function for App called by successful Google Map API script
+
+//First run function for App, called by successful Google API.
+// Requests place list data via API, if successful, starts ViewModel
 var startApp = function() {
-    ko.applyBindings(new ViewModel());
+    //error handling for AJAX request timeout - pure JS, pre Knockout
+    var startAppTimeout = setTimeout(function() {
+        var error = document.createElement('p');
+        error.className = "error";
+        var errorText = document.createTextNode('Error: MyJson.com not responding - Place List unavailable');
+        error.appendChild(errorText);
+        var container = document.getElementById("container");
+        container.appendChild(error);
+    }, 3000);
+    $.ajax({
+            url: "https://api.myjson.com/bins/1n7ut",
+            type: "GET",
+            contentType: "application/json",
+            dataType: "json"
+        }).done(function(data) {
+            clearTimeout(startAppTimeout);
+            window.ajaxList = data;
+            ko.applyBindings(new ViewModel());
+        })
+        //error handling if MyJson can't respond
+        .fail(function(data) {
+            clearTimeout(startAppTimeout);
+            var error = document.createElement('p');
+            error.className = "error";
+            var errorText = document.createTextNode('Error: MyJson.com was not able to deliver place list');
+            error.appendChild(errorText);
+            var container = document.getElementById("container");
+            container.appendChild(error);
+        });
 };
-//Error function run by "onerror" if Google Map API script fails to load
+
+//Error function run by "onerror" if Google Map API script fails to load - "pure" JS
 var errorCall = function() {
-    $('#error').text('Error: Google Map API failed to load').removeClass('noerror').addClass('error');
+    var error = document.createElement('p');
+    error.className = "error";
+    var errorText = document.createTextNode('Error: Google Map API failed to load');
+    error.appendChild(errorText);
+    var container = document.getElementById("container");
+    container.appendChild(error);
 };
